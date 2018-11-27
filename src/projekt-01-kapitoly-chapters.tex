@@ -22,12 +22,15 @@ RFID vznikla jako alternativa k čárovým kódům. I když je výroba čárový
 Primární využití RFID tagů spočívá v identifikaci objektů. Cena takových objektů je nesrovnatelně vyšší oproti ceně tagu. Pokud je značený objekt levný, tag musí být ještě levnější. Narozdíl od RFID čteček jsou tagy prakticky pořád v pohybu, ať už jako chytré karty, nebo identifikátory zboží, vlaků kontejnerů apod. Tagy tedy musí být velmi levné za vysoké odolnosti proti fyzickému poškození\cite{The_RF_in_RFID}.
 RFID tag je systém skládající se minimálně z mikročipu, antény a pouzdra. Mikročip obsahuje pamět a logické obvody pro příjímání a odesílání dat čtecímu zařízení. Anténa přijímá signál z čtečky a poté jej zpětně rozptýlí (dále jen backscatter modulace) odesílanými daty. Pouzdro je potřeba pro udržení integrity tagu a proti vnějšímu poškození samotného čipu a antény\cite{RFID_explained}.
 RFID tagy se dělí na aktivní, pasivní a částečně pasivní podle toho zda je jsou napájeny z externího, nebo interního zdroje\cite{The_RF_in_RFID}. Rozdíl je také v tom, kdo iniciuje komunikaci. Aktivní tag komunikaci zahajuje sám, zatímco komunikaci s pasivními tagy musí zahájit sama čtečka\cite{Hazardous_areas}. 
-\par % ?? \subsection{Aktivní tagy}
+
+\subsection{Pasivní tagy}
+Pasivní tagy identifikují levné objekty. Interní zdroj, i ve formě malé baterie, je pro ně příliš velký a drahý. Stejně jako transmittery a příjímače používané v klasických radiových zařízeních. Bez konvenčního zdroje energie jsou prakticky použitelné pouze jednoduché obvody a logika, které je možno napájet bezdrátově i na vzdálenost několika metrů od čtecího zařízení\cite{The_RF_in_RFID}. 
+
+\subsection{Aktivní tagy} %\par ?? 
 Aktivní tagy jsou napájeny z vlastního zdroje. Ten může být buď baterie, nebo připojení do elektrické infrastruktury. Zdroj napájí nejenom přenos dat, ale i ostatní elektronické komponenty. Těmito komponentami mohou být různé senzory nebo uživatelské rozhraní.\cite{RFID_explained}. Vzhledem k technologii logických obvodů postupuje vývoj baterií velmi pomalu. Jedním z hlavních problémů návrhu těchto tagů je tedy zkrácení doby aktivity a snížení energie potřebné jak pro aktivní, tak pro klidové období tagu. Technologické skloubení těchto požadavků není jednoduché a výroba tagů se do jisté míry podobá výrobě běžných rádiových zařízení. Diskrétní komponenty a integrované obvody připájené k tištěným spojům, to celé připojené k anténě a uložené v plastovém krytu\cite{The_RF_in_RFID}. 
 Částečně pasivní tagy obsahují vnitřní zdroj pouze k napájení pomocných komponent. Data jsou přenášena pomocí backscatter modulace, jako u pasivních tagů\cite{Survey_of_RFID_Tags}.
 
-\subsection{Pasivní tagy}
-Pasivní tagy identifikují levné objekty. Interní zdroj, i ve formě malé baterie, je pro ně příliš velký a drahý. Stejně jako transmittery a příjímače používané v klasických radiových zařízeních. Bez konvenčního zdroje energie jsou prakticky použitelné pouze jednoduché obvody a logika, které je možno napájet bezdrátově i na vzdálenost několika metrů od čtecího zařízení. 
+
 \section{Čtečky}
 
 \section{Použití}
