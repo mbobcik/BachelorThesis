@@ -24,9 +24,22 @@ RFID tag je systém skládající se minimálně z mikročipu, antény a pouzdra
 RFID tagy se dělí na aktivní, pasivní a částečně pasivní podle toho zda je jsou napájeny z externího, nebo interního zdroje\cite{The_RF_in_RFID}. Rozdíl je také v tom, kdo iniciuje komunikaci. Aktivní tag komunikaci zahajuje sám, zatímco komunikaci s pasivními tagy musí zahájit sama čtečka\cite{Hazardous_areas}. 
 
 \subsection{Pasivní tagy}
-Pasivní tagy identifikují levné objekty. Interní zdroj, i ve formě malé baterie, je pro ně příliš velký a drahý. Stejně jako transmittery a příjímače používané v klasických radiových zařízeních. Bez konvenčního zdroje energie jsou prakticky použitelné pouze jednoduché obvody, které je možno napájet bezdrátově i na vzdálenost několika metrů od čtecího zařízení\cite{The_RF_in_RFID}. 
+Pasivní tagy identifikují levné objekty. Interní zdroj, i ve formě malé baterie, je pro ně příliš velký a drahý. Stejně jako transmittery a příjímače používané v klasických radiových zařízeních. Bez konvenčního zdroje energie jsou prakticky použitelné pouze jednoduché obvody, které je možno napájet bezdrátově i na vzdálenost několika metrů od čtecího zařízení. 
 \par 
-Aby mohl integrovaný obvod tagu pracovat potřebuje zdroj stejnosměrného proudu několika desítek mikroampérů o napětí  jeden až tři volty v závislosti na typu použitých tranzistorů. Toto napětí musí tag získat z RF signálu. Frekvence tohoto signálu se podle použití liší. Od použité frekvence se také odvíjí dosah čtení a rychlost přenosu dat (viz. tabulka která tu ještě není\cite{Emulator_UHD_RFID_Tagu}-str 12 ). Chytré karty používají HF pásmo\cite{Smart_Cards_Tokens_Security}. 
+Aby mohl integrovaný obvod tagu pracovat potřebuje zdroj stejnosměrného proudu několika desítek mikroampérů o napětí  jeden až tři volty v závislosti na typu použitých tranzistorů. Toto napětí musí tag získat z RF signálu\cite{The_RF_in_RFID}. Frekvence tohoto signálu se podle použití liší. Od použité frekvence se také odvíjí dosah čtení a rychlost přenosu dat (viz. tabulka \ref{tabulka_pasem}). Chytré karty používají HF pásmo\cite{Smart_Cards_Tokens_Security}. 
+
+\begin{table}[]
+\begin{tabular}{cccc}
+\hline
+Pásmo               & Frekvence   & Dosah   & Přenosová rychlost \\ \hline
+LF                  & 125-135 kHz & 1-2 m   & 100 bps            \\
+HF                  & 13,56 MHz   & 2 m     & 2 kbps             \\
+UHF-Evropa          & 865-868 MHz & 12-20 m & 40-640 kbps        \\
+UHF-Severní Amerika & 902-928 MHz & 12-20 m & 40-640 kbps        \\ \hline
+\end{tabular}
+\caption{Porovnání vlastností operačních pásem RFID\cite{RFID_explained}\cite{The_RF_in_RFID}}
+\label{tabulka_pasem}
+\end{table}
 
 \subsection{Aktivní tagy} %\par ?? 
 Aktivní tagy jsou napájeny z vlastního zdroje. Ten může být buď baterie, nebo připojení do elektrické infrastruktury. Zdroj napájí nejenom přenos dat, ale i ostatní elektronické komponenty. Těmito komponentami mohou být různé senzory nebo uživatelské rozhraní.\cite{RFID_explained}. Vzhledem k technologii logických obvodů postupuje vývoj baterií velmi pomalu. Jedním z hlavních problémů návrhu těchto tagů je tedy zkrácení doby aktivity a snížení energie potřebné jak pro aktivní, tak pro klidové období tagu. Technologické skloubení těchto požadavků není jednoduché a výroba tagů se do jisté míry podobá výrobě běžných rádiových zařízení. Diskrétní komponenty a integrované obvody připájené k tištěným spojům, to celé připojené k anténě a uložené v plastovém krytu\cite{The_RF_in_RFID}. 
