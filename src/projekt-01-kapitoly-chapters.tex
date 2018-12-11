@@ -26,14 +26,15 @@ RFID tagy se dělí na aktivní, pasivní a částečně pasivní podle toho zda
 \subsection{Pasivní tagy}
 Pasivní tagy identifikují levné objekty. Interní zdroj, i ve formě malé baterie, je pro ně příliš velký a drahý. Stejně jako transmittery a příjímače používané v klasických radiových zařízeních. Bez konvenčního zdroje energie jsou prakticky použitelné pouze jednoduché obvody, které je možno napájet bezdrátově i na vzdálenost několika metrů od čtecího zařízení\cite{The_RF_in_RFID}. 
 \par 
-Aby mohl integrovaný obvod tagu pracovat potřebuje zdroj stejnosměrného proudu několika desítek mikroampérů o napětí  jeden až tři volty v závislosti na typu použitých tranzistorů. Toto napětí musí tag získat z RF signálu. Frekvence tohoto signálu se podle použití liší. Od použité frekvence se také odvíjí dosah čtení a rychlost přenosu dat (viz. tabulka která tu ještě není\cite{Emulator_UHD_RFID_Tagu}-str 12 ). Chytré karty používají HF pásmo. Příjímaný RF signál tedy mění polaritu zhruba 13,5 milionkrát za vteřinu
+Aby mohl integrovaný obvod tagu pracovat potřebuje zdroj stejnosměrného proudu několika desítek mikroampérů o napětí  jeden až tři volty v závislosti na typu použitých tranzistorů. Toto napětí musí tag získat z RF signálu. Frekvence tohoto signálu se podle použití liší. Od použité frekvence se také odvíjí dosah čtení a rychlost přenosu dat (viz. tabulka která tu ještě není\cite{Emulator_UHD_RFID_Tagu}-str 12 ). Chytré karty používají HF pásmo\cite{Smart_Cards_Tokens_Security}. Příjímaný RF signál tedy mění polaritu zhruba 13,5 milionkrát za vteřinu.
 
 \subsection{Aktivní tagy} %\par ?? 
 Aktivní tagy jsou napájeny z vlastního zdroje. Ten může být buď baterie, nebo připojení do elektrické infrastruktury. Zdroj napájí nejenom přenos dat, ale i ostatní elektronické komponenty. Těmito komponentami mohou být různé senzory nebo uživatelské rozhraní.\cite{RFID_explained}. Vzhledem k technologii logických obvodů postupuje vývoj baterií velmi pomalu. Jedním z hlavních problémů návrhu těchto tagů je tedy zkrácení doby aktivity a snížení energie potřebné jak pro aktivní, tak pro klidové období tagu. Technologické skloubení těchto požadavků není jednoduché a výroba tagů se do jisté míry podobá výrobě běžných rádiových zařízení. Diskrétní komponenty a integrované obvody připájené k tištěným spojům, to celé připojené k anténě a uložené v plastovém krytu\cite{The_RF_in_RFID}. 
 Částečně pasivní tagy obsahují vnitřní zdroj pouze k napájení pomocných komponent. Data jsou přenášena pomocí backscatter modulace, jako u pasivních tagů\cite{Survey_of_RFID_Tags}.
 
 
-\section{Čtečky}
+\section{Čtecí zařízení}
+Pro rádiovou komunikaci s tagy se používá čtecí zařízení, které funguje jako vysílač i příjímač dohromady. Taková zařízení komunikují buď plným, nebo polovičním duplexem. Poloduplexní spojení znamená, že zařízení nemůže příjmat a vysílat zároveň. Současný obousměrný přenos podporuje plný duplex. Pro komunikaci s pasivními tagy se používá právě plný duplex. Čtecí zařízení musí vysílat RF signál pro napájení tagu, a zároveň přijímat odpověď.
 
 \section{Použití}
 
