@@ -58,7 +58,11 @@ Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač m
 
 Chytré karty, jak už název napovídá, jsou karty, které mohou být použity chytrým způsobem. Za chytrou kartu považujeme plastovou kartu s integrovaným obvodem. Takové karty lze obecně považovat za čipové karty, a ty mohou být v kontaktní, nebo bezkontaktní variantě. Kontaktní karty se vkládají do čtecích zařízení, které naváže fyzický kontakt se zlatě zbarveným rozhraním karty. Bezkontaktní karty stačí dostat do blízkosti čtecího zařízení. Napájení a komunikace je poté zajištěna pomocí RFID. Pod pojmem \"chytrá karta\" si obyčejně člověk představí platební kartu. Mohou ale být použity i ve formě elektronických pasů, občanských průkazů, přístupových karet, jako zabezpečení proti krádeži apod\cite{Mifare_Classic_story}. Ne každá karta vyžaduje stejné zabezpečení. Některé ho nevyžadují vůbec. Například jednoduché tagy vysílající své ID jako inventarizační systém ve skladech. Jiné vyžadují složité  kryptografické mechanismy zajišťující soukromí přenášených dat. 
 \par
-Jednoduchý tag je nejmíň zabezpečený z těchto produktů. Je nastaven tak, že své unikátní ID, které vysílá, je pouze pro čtení ((read-only)}. Kromě vysílání svého ID nemá žadný jiný protokol, je tedy jednoduché odposlouchávat komunikaci a replikovat ji pomocí emulátoru. Místo speciálního emulátoru lze použít podobný tag, který umožnuje změnu svého ID.
+Jednoduchý tag je nejmíň zabezpečený z těchto produktů. Je nastaven tak, že své unikátní ID, které vysílá, je pouze pro čtení {(Read-only)}. Kromě vysílání svého ID nemá žadný jiný protokol, je tedy jednoduché odposlouchávat komunikaci a replikovat ji pomocí emulátoru. Místo speciálního emulátoru lze použít podobný tag, který umožnuje změnu svého ID.
+\par
+Paměťové tagy, stejně jako jednoduché, mají unikátní ID, navíc ale obsahují paměť. Tato paměť je jak pro čtení, tak pro zápis {(Read/Write)}. Její přenos není nijak šifrován, což může vést k neoprávněnému čtení, nebo emulaci. Výrobce karet může ovšem data opatřit ochranou integrity, například pomocí MAC algoritmu (z anglického Message Authentication Code). Tato metoda zabrání útočníkovi ve vytváření nových a modifikaci stávajících dat. Je ale nutné opatřit čtecí zařízení funkcionalitou a klíči k ověření MAC.
+% popsat MAC algoritmu (?)
+\par
 
 
 
@@ -69,11 +73,6 @@ Co jsou vlastně chytré karty \cite{Smart_Cards_Tokens_Security} {-} str. 34 ..
 Použitá pamět EEPROM \cite{Smart_card_handbook} {- str. 39} ... 
 Typy chytrých karet\cite{Smart_card_handbook}{ - str. 41-43} \cite{Smart_Cards_Tokens_Security}{ - str. 34-40}
 
-\begin{itemize}
-    \item paměťové
-    \item mikroprocesorové
-    \item bezdotykové
-\end{itemize}
 
 \par
 Výroba Smart karet \cite{Smart_Cards_Tokens_Security}{ - str. 58-80} ??
