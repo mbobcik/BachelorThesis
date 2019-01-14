@@ -53,7 +53,7 @@ Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač m
 \section{Použití}
 
 
-\chapter{Chytré karty Mifare Classic}
+\chapter{Chytré karty MIFARE Classic}
 \label{chytre_karty}
 
 \section{Úvod do chytrých karet}
@@ -69,6 +69,18 @@ Tag se zabezpečenou pamětí implementuje nejaký kryptografický protokol pro 
 \par
 Nejpokročilejšími jsou zabezpečené tagy s mikrokontrolerem, který umožňuje nahrát různou funkcionalitu. Tyto tagy obvykle implementují bezpečnostní standardy jako například Global Platform. Šifrování, verifikace a další symetrické i asymetrické kryptografické metody jsou zajištěny kryptografickými koprocesory přímo na tagu\cite{Mifare_Classic_story}. Správný chod mikrokontroleru je zabezpečen například senzory vysokého a nízkého napětí, teploty, nebo frekvence, filtrem vstupu hodinového signálu, nebo aktivním stíněním\cite{NXP_Microcontroller_overview}.
 
+\section{MIFARE\textsuperscript{\textregistered}}
+MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společnosti NXP Semiconductors, dřívé známé pod jménem Philips Semiconductors. Tato značka zahrnuje množství proprietárních, bezdrátových řešení splňující mezinárodní standard ISO/IEC 14443. Produktová rodina zahrnuje čtyři typy karet. Zpětná kompabilita zajištuje bezproblémové přecházení na lépe zabezpečené produkty s více funkcemi. S více než 10 miliardami prodaných karet ovládá MIFARE zhruba 80\% světového trhu s bezdrátovýma chytrýma kartama. %něco něco MIFARE4Mobile. něco něco MIFARE2GO
+\cite{About_MIFARE}.
+
+\subsection{Varianty karet Mifare}
+
+\begin{itemize}
+  \item MIFARE Classic\textsuperscript{\textregistered}  
+  \item MIFARE Ultralight\textsuperscript{\textregistered}  
+  \item MIFARE DESFire\textsuperscript{\textregistered} 
+  \item MIFARE SmartMX\textsuperscript{\textregistered} 
+\end{itemize}
 
 Historie chytrých karet \cite{Smart_card_handbook} {-} str. 37 ...
 Největší rozvoj hlavně v Německu a Francii\cite{Smart_card_handbook} {-} str. 38-40
@@ -81,14 +93,7 @@ Typy chytrých karet\cite{Smart_card_handbook}{ - str. 41-43} \cite{Smart_Cards_
 \par
 Výroba Smart karet \cite{Smart_Cards_Tokens_Security}{ - str. 58-80} ??
 
-\section{Varianty karet Mifare(?)}
 
-\begin{itemize}
-  \item MIFARE Classic 
-  \item MIFARE Plus
-  \item MIFARE Ultralight 
-  \item MIFARE DESFire
-\end{itemize}
 
 \section{Známé zranitelnosti}
 
