@@ -52,8 +52,8 @@ Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač m
 
 \section{Použití}
 
-
-\chapter{Chytré karty MIFARE Classic}
+                                    
+\chapter{Chytré karty MIFARE Classic\textsuperscript{\textregistered}}
 \label{chytre_karty}
 
 \section{Úvod do chytrých karet}
@@ -70,8 +70,8 @@ Tag se zabezpečenou pamětí implementuje nejaký kryptografický protokol pro 
 Nejpokročilejšími jsou zabezpečené tagy s mikrokontrolerem, který umožňuje nahrát různou funkcionalitu. Tyto tagy obvykle implementují bezpečnostní standardy jako například Global Platform. Šifrování, verifikace a další symetrické i asymetrické kryptografické metody jsou zajištěny kryptografickými koprocesory přímo na tagu\cite{Mifare_Classic_story}. Správný chod mikrokontroleru je zabezpečen například senzory vysokého a nízkého napětí, teploty, nebo frekvence, filtrem vstupu hodinového signálu, nebo aktivním stíněním\cite{NXP_Microcontroller_overview}.
 
 \section{MIFARE\textsuperscript{\textregistered}}
-MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společnosti NXP Semiconductors, dřívé známé pod jménem Philips Semiconductors. Tato značka zahrnuje množství proprietárních, bezdrátových řešení splňující mezinárodní standard ISO/IEC 14443. Produktová rodina zahrnuje čtyři typy karet. Zpětná kompabilita zajištuje bezproblémové přecházení na lépe zabezpečené produkty s více funkcemi. S více než 10 miliardami prodaných karet ovládá MIFARE zhruba 80\% světového trhu s bezdrátovýma chytrýma kartama. %něco něco MIFARE4Mobile. něco něco MIFARE2GO
-\cite{About_MIFARE}.
+MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společnosti NXP Semiconductors, dřívé známé pod jménem Philips Semiconductors. Tato značka zahrnuje množství proprietárních, bezdrátových řešení splňující mezinárodní standard ISO/IEC 14443. Produktová rodina zahrnuje čtyři typy karet. Zpětná kompabilita zajištuje bezproblémové přecházení na lépe zabezpečené produkty s více funkcemi. S více než 10 miliardami prodaných karet ovládá MIFARE zhruba 80\% světového trhu s bezdrátovýma chytrýma kartama. 
+\cite{About_MIFARE}\cite{Dismantling_Mifare_Classic}.
 
 \subsection{Varianty karet Mifare}
 
@@ -82,16 +82,24 @@ MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společno
   \item MIFARE SmartMX\textsuperscript{\textregistered} 
 \end{itemize}
 
-Historie chytrých karet \cite{Smart_card_handbook} {-} str. 37 ...
-Největší rozvoj hlavně v Německu a Francii\cite{Smart_card_handbook} {-} str. 38-40
-\par 
-Co jsou vlastně chytré karty \cite{Smart_Cards_Tokens_Security} {-} str. 34 ... 
-Použitá pamět EEPROM \cite{Smart_card_handbook} {- str. 39} ... 
-Typy chytrých karet\cite{Smart_card_handbook}{ - str. 41-43} \cite{Smart_Cards_Tokens_Security}{ - str. 34-40}
+\par
+Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Zabezpečení ale není nejsilnější stránka těchto karet. I mnohem starší DES šifra odolá o několik řádů delší čas útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet, MIFARE Plus a MIFARE DESFire\cite{Mifare_Classic_story}\cite{MIFARE_Classic_Official_about}. 
+\par
+%plus a desfire
+\par
+%ultralight
+
+
+%Historie chytrých karet \cite{Smart_card_handbook} {-} str. 37 ...
+%Největší rozvoj hlavně v Německu a Francii\cite{Smart_card_handbook} {-} str. 38-40
+%\par 
+%Co jsou vlastně chytré karty \cite{Smart_Cards_Tokens_Security} {-} str. 34 ... 
+%Použitá pamět EEPROM \cite{Smart_card_handbook} {- str. 39} ... 
+%Typy chytrých karet\cite{Smart_card_handbook}{ - str. 41-43} \cite{Smart_Cards_Tokens_Security}{ - str. 34-40}
 
 
 \par
-Výroba Smart karet \cite{Smart_Cards_Tokens_Security}{ - str. 58-80} ??
+%Výroba Smart karet \cite{Smart_Cards_Tokens_Security}{ - str. 58-80} ??
 
 
 
