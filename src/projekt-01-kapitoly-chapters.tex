@@ -1,8 +1,11 @@
 %===============================================================================
 
+%                                   NADPIS                      
 \chapter{Úvod}
 \label{uvod}
 
+
+%                                   NADPIS                      
 \chapter{Radio frekvenční identifikace}
 \label{technologie_rfid}
 V této kapitole jsou popsány principy komunikace pomocí radio frekvenční identifikace (dále jen RFID), její historie, jednotlivé komponenty a využití v průmyslu a každodenním životě.
@@ -52,11 +55,12 @@ Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač m
 
 \section{Použití}
 
-                                    
+              
+%                                   NADPIS                      
 \chapter{Chytré karty MIFARE Classic\textsuperscript{\textregistered}}
 \label{chytre_karty}
-
-\section{Úvod do chytrých karet}
+V této kapitole jsou popsány obecně chytré karty a jejich typy. Následuje představení značky MIFARE a karet MIFARE Classic. Na závěr budou představeny některé zranitelnosti těchto karet.
+\section{Co jsou chytré karty}
 Chytré karty, jak už název napovídá, jsou karty, které mohou být použity chytrým způsobem. Za chytrou kartu považujeme plastovou kartu s integrovaným obvodem. Takové karty lze obecně považovat za čipové karty, a ty mohou být v kontaktní, nebo bezkontaktní variantě. Kontaktní karty se vkládají do čtecích zařízení, které naváže fyzický kontakt se zlatě zbarveným rozhraním karty. Bezkontaktní karty stačí dostat do blízkosti čtecího zařízení. Napájení a komunikace je poté zajištěna pomocí RFID. Pod pojmem "chytrá karta" si obyčejně člověk představí platební kartu. Mohou ale být použity i ve formě elektronických pasů, občanských průkazů, přístupových karet, jako zabezpečení proti krádeži apod. Ne každá karta vyžaduje stejné zabezpečení. Některé ho nevyžadují vůbec. Například jednoduché tagy vysílající své ID jako inventarizační systém ve skladech. Jiné vyžadují složité  kryptografické mechanismy zajišťující soukromí přenášených dat. 
 \par
 Jednoduchý tag je nejmíň zabezpečený z těchto produktů. Je nastaven tak, že své unikátní ID, které vysílá, je pouze pro čtení {(Read-only)}. Kromě vysílání svého ID nemá žadný jiný protokol, je tedy jednoduché odposlouchávat komunikaci a replikovat ji pomocí emulátoru. Místo speciálního emulátoru lze použít podobný tag, který umožnuje změnu svého ID.
@@ -83,7 +87,7 @@ MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společno
 \end{itemize}
 
 \par
-Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Zabezpečení ale není nejsilnější stránka těchto karet. I mnohem starší DES šifra odolá o několik řádů delší čas útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet, MIFARE Plus a MIFARE DESFire\cite{Mifare_Classic_story}\cite{MIFARE_Classic_Official_about}. 
+Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Zabezpečení ale není nejsilnější stránka těchto karet. Pro porovnání, i mnohem starší DES šifrování odolá o několik řádů delší čas útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet, MIFARE Plus a MIFARE DESFire\cite{Mifare_Classic_story}\cite{MIFARE_Classic_Official_about}. 
 \par
 %plus a desfire
 \par
@@ -105,8 +109,10 @@ Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 
 
 \section{Známé zranitelnosti}
 
-Smart Card Security \cite{Smart_Cards_Tokens_Security}{ - str. 224-254}
+%Smart Card Security \cite{Smart_Cards_Tokens_Security}{ - str. 224-254}
 
+
+%                               NADPIS                      
 \chapter{Zařízení Chameleon Mini}
 \label{zarizeni_chameleon_mini}
 
