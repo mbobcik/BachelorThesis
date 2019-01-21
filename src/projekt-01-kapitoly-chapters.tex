@@ -22,7 +22,7 @@ Principy RFID byly poprvé použity v systému IFF (Identity: Friend or Foe) za 
 RFID vznikla jako alternativa k čárovým kódům. I když je výroba čárových kódů levnější, mají proti RFID mnoho nevýhod. Pro čtení musí čtecí zařízení přímo vidět na štítek s kódem. Nesmí být snížená jeho vizuální čitelnost, například špínou, popisovačem, nebo pokroucením. Zápis více informací se dá řešit pouze zvětšením plochy štítku, nebo použitím jemnějšího značení, které je ale viditelné z menší vzdálenosti. Modifikace dat uložených pomocí čárových kódů se dá prakticky řešit pouze tiskem nového kódu \cite{The_RF_in_RFID}\cite{Emulator_UHD_RFID_Tagu}.
 
 \section{Tagy}
-Primární využití RFID tagů spočívá v identifikaci objektů. Cena takových objektů je nesrovnatelně vyšší oproti ceně tagu. Pokud je značený objekt levný, tag musí být ještě levnější. Narozdíl od RFID čteček jsou tagy prakticky pořád v pohybu, ať už jako chytré karty, nebo identifikátory zboží, vlaků kontejnerů apod. Tagy tedy musí být velmi levné za vysoké odolnosti proti fyzickému poškození\cite{The_RF_in_RFID}.
+Primární využití RFID tagů spočívá v identifikaci objektů. Cena takových objektů je nesrovnatelně vyšší oproti ceně tagu. Pokud je značený objekt levný, tag musí být ještě levnější. Na rozdíl od RFID čteček jsou tagy prakticky pořád v pohybu, ať už jako chytré karty, nebo identifikátory zboží, vlaků kontejnerů apod. Tagy tedy musí být velmi levné za vysoké odolnosti proti fyzickému poškození\cite{The_RF_in_RFID}.
 RFID tag je systém skládající se minimálně z mikročipu, antény a pouzdra. Mikročip obsahuje pamět a logické obvody pro příjímání a odesílání dat čtecímu zařízení. Anténa přijímá signál z čtečky a poté jej zpětně rozptýlí (dále jen backscatter modulace) odesílanými daty. Pouzdro je potřeba pro udržení integrity tagu a jako ochrana proti vnějšímu poškození samotného čipu a antény\cite{RFID_explained}.
 RFID tagy se dělí na aktivní, pasivní a částečně pasivní podle toho zda je jsou napájeny z externího, nebo interního zdroje\cite{The_RF_in_RFID}. Rozdíl je také v tom, kdo iniciuje komunikaci. Aktivní tag komunikaci zahajuje sám, zatímco komunikaci s pasivními tagy musí zahájit sama čtečka\cite{Hazardous_areas}. 
 
@@ -50,8 +50,8 @@ Aktivní tagy jsou napájeny z vlastního zdroje. Ten může být buď baterie, 
 
 
 \section{Čtecí zařízení}
-Pro rádiovou komunikaci s tagy se používá čtecí zařízení, které funguje jako vysílač i příjímač dohromady. Taková zařízení komunikují buď plným, nebo polovičním duplexem. Poloduplexní spojení znamená, že zařízení nemůže příjmat a vysílat zároveň. Současný obousměrný přenos podporuje plný duplex. Pro komunikaci s pasivními tagy se používá právě plný duplex. Čtecí zařízení musí vysílat RF signál pro napájení tagu, a zároveň přijímat odpověď.
-Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač mohou mít každý svou anténu. Tato konfigurace je známá jako bistatická. Monostatický systém používá jednu anténu pro vysílání a prijímání signálu zároveň. V tomto případě je příjmač vystaven signálu z vysílače. Příjmač tedy musí být navržený tak, aby rozeznal signál z tagu\cite{The_RF_in_RFID}.\par
+Pro rádiovou komunikaci s tagy se používá čtecí zařízení, které funguje jako vysílač i příjímač dohromady. Taková zařízení komunikují buď plným, nebo polovičním duplexem. Poloduplexní spojení znamená, že zařízení nemůže přijímat a vysílat zároveň. Současný obousměrný přenos podporuje plný duplex. Pro komunikaci s pasivními tagy se používá právě plný duplex. Čtecí zařízení musí vysílat RF signál pro napájení tagu, a zároveň přijímat odpověď.
+Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač mohou mít každý svou anténu. Tato konfigurace je známá jako bistatická. Monostatický systém používá jednu anténu pro vysílání a přijímání signálu zároveň. V tomto případě je příjmač vystaven signálu z vysílače. Příjmač tedy musí být navržený tak, aby rozeznal signál z tagu\cite{The_RF_in_RFID}.\par
 
 \section{Použití}
 
@@ -60,22 +60,27 @@ Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač m
 \chapter{Chytré karty MIFARE Classic\textsuperscript{\textregistered}}
 \label{chytre_karty}
 V této kapitole jsou popsány obecně chytré karty a jejich typy. Následuje představení značky MIFARE a karet MIFARE Classic. Na závěr budou představeny některé zranitelnosti těchto karet.
+
 \section{Co jsou chytré karty}
 Chytré karty, jak už název napovídá, jsou karty, které mohou být použity chytrým způsobem. Za chytrou kartu považujeme plastovou kartu s integrovaným obvodem. Takové karty lze obecně považovat za čipové karty, a ty mohou být v kontaktní, nebo bezkontaktní variantě. Kontaktní karty se vkládají do čtecích zařízení, které naváže fyzický kontakt se zlatě zbarveným rozhraním karty. Bezkontaktní karty stačí dostat do blízkosti čtecího zařízení. Napájení a komunikace je poté zajištěna pomocí RFID. Pod pojmem "chytrá karta" si obyčejně člověk představí platební kartu. Mohou ale být použity i ve formě elektronických pasů, občanských průkazů, přístupových karet, jako zabezpečení proti krádeži apod. Ne každá karta vyžaduje stejné zabezpečení. Některé ho nevyžadují vůbec. Například jednoduché tagy vysílající své ID jako inventarizační systém ve skladech. Jiné vyžadují složité  kryptografické mechanismy zajišťující soukromí přenášených dat. 
 \par
-Jednoduchý tag je nejmíň zabezpečený z těchto produktů. Je nastaven tak, že své unikátní ID, které vysílá, je pouze pro čtení {(Read-only)}. Kromě vysílání svého ID nemá žadný jiný protokol, je tedy jednoduché odposlouchávat komunikaci a replikovat ji pomocí emulátoru. Místo speciálního emulátoru lze použít podobný tag, který umožnuje změnu svého ID.
+Jednoduchý tag je nejméně zabezpečený z těchto produktů. Je nastaven tak, že své unikátní ID, které vysílá, je pouze pro čtení {(Read-only)}. Kromě vysílání svého ID nemá žádný jiný protokol, je tedy jednoduché odposlouchávat komunikaci a replikovat ji pomocí emulátoru. Místo speciálního emulátoru lze použít podobný tag, který umožnuje změnu svého ID.
 \par
 Paměťové tagy, stejně jako jednoduché, mají unikátní ID, navíc ale obsahují paměť. Tato paměť je jak pro čtení, tak pro zápis {(Read/Write)}. Její přenos není nijak šifrován, což může vést k neoprávněnému čtení, nebo emulaci. Výrobce karet může ovšem data opatřit ochranou integrity, například pomocí MAC (z anglického Message Authentication Code). Tato metoda zabrání útočníkovi ve vytváření nových a modifikaci stávajících dat. Je ale nutné opatřit čtecí zařízení funkcionalitou a klíči k ověření MAC\cite{Mifare_Classic_story}.
 \par
-MAC je krátká informace odesílána s daty, která dokáže zajistit integritu a autenticitu dat. To znamená ověřit, že data byla odeslána důvěryhodným odesílatelem a nebyla nijak modifikována. Tato metoda se skládá ze tří algoritmů. První algoritmus generuje náhodné klíče z množiny klíčů. Druhý algoritmus ze vstupních dat a klíče vygeneruje MAC. A třetí algoritmus pomocí klíče a MAC verifikuje přijatá data\cite{Foundations_Of_Cryptography}.
-\par
-Tag se zabezpečenou pamětí implementuje nejaký kryptografický protokol pro správu přístupu k paměti. Tag a čtecí zařízení se nejprve vzájemě autentizují, a teprve poté je povolen přístup k paměti. Data z paměti jsou před odesláním většinou nejprve zašifrována relačním klíčem, aby byla zajištěna jejich bezpečnost. Paměť některých tagů je rozdělena do menších oddílů, z nichž každý má vlastní klíč. Toto uspořádání umožňuje použít jeden tag k více aplikacím, přičemž každé aplikaci náleží jiný klíč.
+Tag se zabezpečenou pamětí implementuje nějaký kryptografický protokol pro správu přístupu k paměti. Tag a čtecí zařízení se nejprve vzájemně autentizují, a teprve poté je povolen přístup k paměti. Data z paměti jsou před odesláním většinou nejprve zašifrována relačním klíčem, aby byla zajištěna jejich bezpečnost. Paměť některých tagů je rozdělena do menších oddílů, z nichž každý má vlastní klíč. Toto uspořádání umožňuje použít jeden tag k více aplikacím, přičemž každé aplikaci náleží jiný klíč.
 \par
 Nejpokročilejšími jsou zabezpečené tagy s mikrokontrolerem, který umožňuje nahrát různou funkcionalitu. Tyto tagy obvykle implementují bezpečnostní standardy jako například Global Platform. Šifrování, verifikace a další symetrické i asymetrické kryptografické metody jsou zajištěny kryptografickými koprocesory přímo na tagu\cite{Mifare_Classic_story}. Správný chod mikrokontroleru je zabezpečen například senzory vysokého a nízkého napětí, teploty, nebo frekvence, filtrem vstupu hodinového signálu, nebo aktivním stíněním\cite{NXP_Microcontroller_overview}.
 
+\subsection{Message authentication code}
+Message authentication code (dále jen MAC) je krátká informace odesílána s daty, která dokáže zajistit integritu a autenticitu dat. To znamená ověřit, že data byla odeslána důvěryhodným odesílatelem a nebyla nijak modifikována. Tato metoda se skládá ze tří algoritmů. První algoritmus generuje náhodné klíče z množiny klíčů. Druhý algoritmus ze vstupních dat a klíče vygeneruje MAC. A třetí algoritmus pomocí klíče a MAC verifikuje přijatá data\cite{Foundations_Of_Cryptography}.
+\par
+
 \section{MIFARE\textsuperscript{\textregistered}}
-MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společnosti NXP Semiconductors, dřívé známé pod jménem Philips Semiconductors. Tato značka zahrnuje množství proprietárních, bezdrátových řešení splňující mezinárodní standard ISO/IEC 14443. Produktová rodina zahrnuje čtyři typy karet. Zpětná kompabilita zajištuje bezproblémové přecházení na lépe zabezpečené produkty s více funkcemi. S více než 10 miliardami prodaných karet ovládá MIFARE zhruba 80\% světového trhu s bezdrátovýma chytrýma kartama. 
+MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společnosti NXP Semiconductors, dříve známé pod jménem Philips Semiconductors. Tato značka zahrnuje množství proprietárních, bezdrátových řešení splňující mezinárodní standard ISO/IEC 14443. Produktová rodina zahrnuje čtyři typy karet. Zpětná kompatibilita zajišťuje bezproblémové přecházení na lépe zabezpečené produkty s více funkcemi. S více než 10 miliardami prodaných karet ovládá MIFARE zhruba 80\% světového trhu s bezdrátovýma chytrýma kartama. 
 \cite{About_MIFARE}\cite{Dismantling_Mifare_Classic}.
+
+\subsection{Standard ISO/IEC 14443}
 
 \subsection{Varianty karet Mifare}
 
