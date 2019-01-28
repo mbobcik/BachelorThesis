@@ -97,13 +97,13 @@ Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 
 Chytré karty MIFARE Plus jsou nástupcem karet Classic. Zpětná kompabilita je zajištěna podporou starší a méně bezpečnou šifrou CRYPTO1. Je tedy možné postupně modernizovat již zavedené systémy, ikdyž tento způsob neodstraňuje všechna rizika karet Classic. Nad to je implementována mnohem bezpečnější 128 bitová AES šifra\cite{MIFARE_Plus_Official}. Karty MIFARE DESFire už šifrování CRYPTO1 nepodporují vůbec. Naopak podporují šifrování DES a AES, komunikaci pomocí NFC a až 28 různých aplikací na jedné kartě\cite{MIFARE_DESFire_Official}. V České Republice je například používají České Dráhy ve svém produktu In Karta\cite{Ceske_Drahy_Podminky_InKarta}. Naopak Ultralight jsou velmi levné karty s krátkou životností a malou pamětí. Jsou vhodné pro jednorázové použití jako celodenní jízdenky nebo vstupenky na velké události\cite{MIFARE_Ultralight_Official}. Každá z těchto karet se dělí na další dva až čtyři podtypy, které se liší v různých parametrech, nebo nabízených vlastnostech karty.
 
 \begin{table}[]
-\begin{tabular}{cccc}
+\begin{tabular}{ccccl}
 \hline
-Produkt             & Classic     & Plus                    & DESFire                   & UltraLight    \\ \hline
-Rychlost přenosu    & 106 kbps    & 106-848 kbps            & 106-848 kbps              & 106 kbps      \\
-Velikost paměti     & 1-4 KB      & 2-4 KB                  & 256 B - 8 KB              & 40-144 B      \\
-Šifrování           & CRYPTO1     & CRYPTO1, 128 bit AES    & 128 bit AES, 168 bit DES  & 112 bit DES   \\
-Životnost           & 10 let      & 10 let                  & 10 let                    & 2 roky        \\
+Produkt          & Classic  & Plus                 & DESFire                  & UltraLight  \\ \hline
+Rychlost přenosu & 106 kbps & 106-848 kbps         & 106-848 kbps             & 106 kbps    \\
+Velikost paměti  & 1-4 KB   & 2-4 KB               & 256 B - 8 KB             & 40-144 B    \\
+Šifrování        & CRYPTO1  & CRYPTO1, 128 bit AES & 128 bit AES, 168 bit DES & 112 bit DES \\
+Životnost        & 10 let   & 10 let               & 10 let                   & 2 roky      \\ \hline
 \end{tabular}
 \caption{Porovnání jednotlivých MIFARE karet\cite{Vedeckotechnicky_sbornik_cd}}
 \label{tabulka_MIFARE_karet}
