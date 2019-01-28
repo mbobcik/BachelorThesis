@@ -64,16 +64,16 @@ V této kapitole jsou popsány obecně chytré karty a jejich typy. Následuje p
 \section{Co jsou chytré karty}
 Chytré karty, jak už název napovídá, jsou karty, které mohou být použity chytrým způsobem. Za chytrou kartu považujeme plastovou kartu s integrovaným obvodem. Takové karty lze obecně považovat za čipové karty, a ty mohou být v kontaktní, nebo bezkontaktní variantě. Kontaktní karty se vkládají do čtecích zařízení, které naváže fyzický kontakt se zlatě zbarveným rozhraním karty. Bezkontaktní karty stačí dostat do blízkosti čtecího zařízení. Napájení a komunikace je poté zajištěna pomocí RFID. Pod pojmem "chytrá karta" si obyčejně člověk představí platební kartu. Mohou ale být použity i ve formě elektronických pasů, občanských průkazů, přístupových karet, jako zabezpečení proti krádeži apod. Ne každá karta vyžaduje stejné zabezpečení. Některé ho nevyžadují vůbec. Například jednoduché tagy vysílající své ID jako inventarizační systém ve skladech. Jiné vyžadují složité  kryptografické mechanismy zajišťující soukromí přenášených dat. 
 \par
-Jednoduchý tag je nejméně zabezpečený z těchto produktů. Je nastaven tak, že své unikátní ID, které vysílá, je pouze pro čtení {(Read-only)}. Kromě vysílání svého ID nemá žádný jiný protokol, je tedy jednoduché odposlouchávat komunikaci a replikovat ji pomocí emulátoru. Místo speciálního emulátoru lze použít podobný tag, který umožnuje změnu svého ID.
+Jednoduchý tag je nejméně zabezpečený z těchto produktů. Je nastaven tak, že své unikátní identifikační číslo (dále jen UID), které vysílá, je pouze pro čtení {(Read-only)}. Kromě vysílání svého UID nemá žádný jiný protokol, je tedy jednoduché odposlouchávat komunikaci a replikovat ji pomocí emulátoru. Místo speciálního emulátoru lze použít podobný tag, který umožnuje změnu svého UID.
 \par
-Paměťové tagy, stejně jako jednoduché, mají unikátní ID, navíc ale obsahují paměť. Tato paměť je jak pro čtení, tak pro zápis {(Read/Write)}. Její přenos není nijak šifrován, což může vést k neoprávněnému čtení, nebo emulaci. Výrobce karet může ovšem data opatřit ochranou integrity, například pomocí MAC (z anglického Message Authentication Code). Tato metoda zabrání útočníkovi ve vytváření nových a modifikaci stávajících dat. Je ale nutné opatřit čtecí zařízení funkcionalitou a klíči k ověření MAC\cite{Mifare_Classic_story}.
+Paměťové tagy, stejně jako jednoduché, mají UID, navíc ale obsahují paměť. Tato paměť je jak pro čtení, tak pro zápis {(Read/Write)}. Její přenos není nijak šifrován, což může vést k neoprávněnému čtení, nebo emulaci. Výrobce karet může ovšem data opatřit ochranou integrity, například pomocí MAC (z anglického Message Authentication Code). Tato metoda zabrání útočníkovi ve vytváření nových a modifikaci stávajících dat. Je ale nutné opatřit čtecí zařízení funkcionalitou a klíči k ověření MAC\cite{Mifare_Classic_story}.
 \par
 Tag se zabezpečenou pamětí implementuje nějaký kryptografický protokol pro správu přístupu k paměti. Tag a čtecí zařízení se nejprve vzájemně autentizují, a teprve poté je povolen přístup k paměti. Data z paměti jsou před odesláním většinou nejprve zašifrována relačním klíčem, aby byla zajištěna jejich bezpečnost. Paměť některých tagů je rozdělena do menších oddílů, z nichž každý má vlastní klíč. Toto uspořádání umožňuje použít jeden tag k více aplikacím, přičemž každé aplikaci náleží jiný klíč.
 \par
 Nejpokročilejšími jsou zabezpečené tagy s mikrokontrolerem, který umožňuje nahrát různou funkcionalitu. Tyto tagy obvykle implementují bezpečnostní standardy jako například Global Platform. Šifrování, verifikace a další symetrické i asymetrické kryptografické metody jsou zajištěny kryptografickými koprocesory přímo na tagu\cite{Mifare_Classic_story}. Správný chod mikrokontroleru je zabezpečen například senzory vysokého a nízkého napětí, teploty, nebo frekvence, filtrem vstupu hodinového signálu, nebo aktivním stíněním\cite{NXP_Microcontroller_overview}.
 
 \subsection{Message authentication code}
-Message authentication code (dále jen MAC) je krátká informace odesílána s daty, která dokáže zajistit integritu a autenticitu dat. To znamená ověřit, že data byla odeslána důvěryhodným odesílatelem a nebyla nijak modifikována. Tato metoda se skládá ze tří algoritmů. První algoritmus generuje náhodné klíče z množiny klíčů. Druhý algoritmus ze vstupních dat a klíče vygeneruje MAC. A třetí algoritmus pomocí klíče a MAC verifikuje přijatá data\cite{Foundations_Of_Cryptography}.
+Message Authentication Code (dále jen MAC) je krátká informace odesílána s daty, která dokáže zajistit integritu a autenticitu dat. To znamená ověřit, že data byla odeslána důvěryhodným odesílatelem a nebyla nijak modifikována. Tato metoda se skládá ze tří algoritmů. První algoritmus generuje náhodné klíče z množiny klíčů. Druhý algoritmus ze vstupních dat a klíče vygeneruje MAC. A třetí algoritmus pomocí klíče a MAC verifikuje přijatá data\cite{Foundations_Of_Cryptography}.
 \par
 
 \section{MIFARE\textsuperscript{\textregistered}}
@@ -86,18 +86,28 @@ MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společno
 
 \begin{itemize}
   \item MIFARE Classic\textsuperscript{\textregistered}  
-  \item MIFARE Ultralight\textsuperscript{\textregistered}  
+  \item MIFARE Plus\textsuperscript{\textregistered}  
   \item MIFARE DESFire\textsuperscript{\textregistered} 
-  \item MIFARE SmartMX\textsuperscript{\textregistered} 
+  \item MIFARE Ultralight\textsuperscript{\textregistered}  
 \end{itemize}
 
 \par
-Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Zabezpečení ale není nejsilnější stránka těchto karet. Pro porovnání, i mnohem starší DES šifrování odolá o několik řádů delší čas útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet, MIFARE Plus a MIFARE DESFire\cite{Mifare_Classic_story}\cite{MIFARE_Classic_Official_about}. 
+Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Data a autentizace jsou šifrovány proprietární šifrou CRYPTO1. Zabezpečení ale není nejsilnější stránka těchto karet. Pro porovnání, i mnohem starší DES šifrování odolá o několik řádů delší čas útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet, MIFARE Plus a MIFARE DESFire\cite{Mifare_Classic_story}\cite{MIFARE_Classic_Official_about}. 
 \par
-%plus a desfire
-\par
-%ultralight
+Chytré karty MIFARE Plus jsou nástupcem karet Classic. Zpětná kompabilita je zajištěna podporou starší a méně bezpečnou šifrou CRYPTO1. Je tedy možné postupně modernizovat již zavedené systémy, ikdyž tento způsob neodstraňuje všechna rizika karet Classic. Nad to je implementována mnohem bezpečnější 128 bitová AES šifra\cite{MIFARE_Plus_Official}. Karty MIFARE DESFire už šifrování CRYPTO1 nepodporují vůbec. Naopak podporují šifrování DES a AES, komunikaci pomocí NFC a až 28 různých aplikací na jedné kartě\cite{MIFARE_DESFire_Official}. V České Republice je například používají České Dráhy ve svém produktu In Karta\cite{Ceske_Drahy_Podminky_InKarta}. Naopak Ultralight jsou velmi levné karty s krátkou životností a malou pamětí. Jsou vhodné pro jednorázové použití jako celodenní jízdenky nebo vstupenky na velké události\cite{MIFARE_Ultralight_Official}. Každá z těchto karet se dělí na další dva až čtyři podtypy, které se liší v různých parametrech, nebo nabízených vlastnostech karty.
 
+\begin{table}[]
+\begin{tabular}{cccc}
+\hline
+Produkt             & Classic     & Plus                    & DESFire                   & UltraLight    \\ \hline
+Rychlost přenosu    & 106 kbps    & 106-848 kbps            & 106-848 kbps              & 106 kbps      \\
+Velikost paměti     & 1-4 KB      & 2-4 KB                  & 256 B - 8 KB              & 40-144 B      \\
+Šifrování           & CRYPTO1     & CRYPTO1, 128 bit AES    & 128 bit AES, 168 bit DES  & 112 bit DES   \\
+Životnost           & 10 let      & 10 let                  & 10 let                    & 2 roky        \\
+\end{tabular}
+\caption{Porovnání jednotlivých MIFARE karet\cite{Vedeckotechnicky_sbornik_cd}}
+\label{tabulka_MIFARE_karet}
+\end{table}
 
 %Historie chytrých karet \cite{Smart_card_handbook} {-} str. 37 ...
 %Největší rozvoj hlavně v Německu a Francii\cite{Smart_card_handbook} {-} str. 38-40
