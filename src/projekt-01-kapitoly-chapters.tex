@@ -81,6 +81,7 @@ MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společno
 \cite{About_MIFARE}\cite{Dismantling_Mifare_Classic}.
 
 \subsection{Standard ISO/IEC 14443}
+Standard ISO 14443 je určena zejména pro identifikační a platební karty. Skládá se ze čtyř částí. První část s označením {ISO 14443-1} popisuje zejména fyzikální charakteristiky karty, její velikost a odolnost proti mechanickému namáhání a průsobení alektrických a magnetických polí. Druhá část ({ISO 14443-2}) udává charakteristiky elektromagnetického pole, které zajišťuje napájení a obousměrnou komunikaci mezi čtecím zařízením a kartou. Čtecí zařízení je zde označováno jako PCD, tedy Proximity Coupling Device, a karta jako PICC, což je zkratka pro Proximity Integrated Circuit Card. Třetí část ({ISO 14443-3}) uvádí, jak má čtecí zařízení postupovat při inicializaci komunikace s kartou, tedy formát bytů, časování a obsah příkazů REQ a ATQ. Dále popisuje jak detekovat a komunikovat s pouze jednou kartou z mnoha v dosahu zařízení, antikolizní metody. Poslední část ({ISO 14443-4})  popisuje protokoly a příkazy používané na vyšších vrstvách komunikace po inicializaci.
 
 \subsection{Varianty karet Mifare}
 
@@ -110,17 +111,7 @@ UltraLight  & 106 kbps          & 40-144 B          & 112 bit DES               
 \end{table}
 
 \section{Karty MIFARE Classic}
-Jak již bylo řečeno, Classic jsou karty se zabezpečenou pamětí. Data udržuje čip s pamětí typu EEPROM. To je zkratka pro Electrically Erasable Programmable {Read-Only} Memory, tedy elektronicky mazatelná a programovatelná paměť pouze pro čtení. Důležitou vlastností je, že EEPROM je nevolatilní paměť, svůj stav si udrží i bez zdroje napájení\cite{Smart_card_handbook}. Nad pamětí karty Classic lze provádět základní operace jako čtení, zápis, přičtení a odečtení. Paměť karty je rozdělena do sektorů a sektory jsou dále rozděleny do bloků po 16 bytech. Poslední blok každého sektoru obsahuje dva 48 bitové klíče a podmínky přístupu pro daný sektor. Klíče jsou sdíleny s legitimním čtecím zažízením. To se musí autentizovat alespoň s jedním z nich. Podmínky přístupu říkají s kterým klíčem lze provádět jaké operace\cite{Dismantling_Mifare_Classic}\cite{Mifare_Classic_story}.
-%Historie chytrých karet \cite{Smart_card_handbook} {-} str. 37 ...
-%Největší rozvoj hlavně v Německu a Francii\cite{Smart_card_handbook} {-} str. 38-40
-%\par 
-%Co jsou vlastně chytré karty \cite{Smart_Cards_Tokens_Security} {-} str. 34 ... 
-%Použitá pamět EEPROM \cite{Smart_card_handbook} {- str. 39} ... 
-%Typy chytrých karet\cite{Smart_card_handbook}{ - str. 41-43} \cite{Smart_Cards_Tokens_Security}{ - str. 34-40}
-
-
-\par
-%Výroba Smart karet \cite{Smart_Cards_Tokens_Security}{ - str. 58-80} ??
+Jak již bylo řečeno, Classic jsou karty se zabezpečenou pamětí. Data udržuje čip s pamětí typu EEPROM. To je zkratka pro Electrically Erasable Programmable {Read-Only} Memory, tedy elektronicky mazatelná a programovatelná paměť pouze pro čtení. Důležitou vlastností je, že EEPROM je nevolatilní paměť, svůj stav si udrží i bez zdroje napájení\cite{Smart_card_handbook}. Nad pamětí karty Classic lze provádět základní operace jako čtení, zápis, přičtení a odečtení. Paměť karty je rozdělena do sektorů a sektory jsou dále rozděleny do bloků po 16 bytech. Na prvním bloku prvního sektoru je zapsáno UID karty, kontrolní součet a data výrobce. Poslední blok každého sektoru obsahuje dva 48 bitové klíče a podmínky přístupu pro daný sektor. Klíče jsou sdíleny s legitimním čtecím zažízením. To se musí autentizovat alespoň jedním z nich. Podmínky přístupu říkají s kterým klíčem lze provádět jaké operace\cite{Dismantling_Mifare_Classic}\cite{Mifare_Classic_story}.
 
 
 
