@@ -81,37 +81,30 @@ MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společno
 \cite{About_MIFARE}\cite{Dismantling_Mifare_Classic}.
 
 \subsection{Standard ISO/IEC 14443}
-Standard ISO 14443 je určena zejména pro identifikační a platební karty. Skládá se ze čtyř částí. První část s označením {ISO 14443-1} popisuje zejména fyzikální charakteristiky karty, její velikost a odolnost proti mechanickému namáhání a průsobení alektrických a magnetických polí. Druhá část ({ISO 14443-2}) udává charakteristiky elektromagnetického pole, které zajišťuje napájení a obousměrnou komunikaci mezi čtecím zařízením a kartou. Čtecí zařízení je zde označováno jako PCD, tedy Proximity Coupling Device, a karta jako PICC, což je zkratka pro Proximity Integrated Circuit Card. Třetí část ({ISO 14443-3}) uvádí, jak má čtecí zařízení postupovat při inicializaci komunikace s kartou, tedy formát bytů, časování a obsah příkazů REQ a ATQ. Dále popisuje jak detekovat a komunikovat s pouze jednou kartou z mnoha v dosahu zařízení, antikolizní metody. Poslední část ({ISO 14443-4})  popisuje protokoly a příkazy používané na vyšších vrstvách komunikace po inicializaci.
+Standard ISO 14443 je určena zejména pro identifikační a platební karty. Skládá se ze čtyř částí. První část s označením {ISO 14443-1} popisuje zejména fyzikální charakteristiky karty, její velikost a odolnost proti mechanickému namáhání a působení elektrických a magnetických polí. Druhá část ({ISO 14443-2}) udává charakteristiky elektromagnetického pole, které zajišťuje napájení a obousměrnou komunikaci mezi čtecím zařízením a kartou. Čtecí zařízení je zde označováno jako PCD, tedy Proximity Coupling Device, a karta jako PICC, což je zkratka pro Proximity Integrated Circuit Card. Třetí část ({ISO 14443-3}) uvádí, jak má čtecí zařízení postupovat při inicializaci komunikace s kartou, tedy formát bytů, časování a obsah příkazů REQ a ATQ. Dále popisuje jak detekovat a komunikovat s pouze jednou kartou z mnoha v dosahu zařízení, antikolizní metody. Poslední část ({ISO 14443-4})  popisuje protokoly a příkazy používané na vyšších vrstvách komunikace po inicializaci.
 
 \subsection{Varianty karet Mifare}
-
-\begin{itemize}
-  \item MIFARE Classic\textsuperscript{\textregistered}  
-  \item MIFARE Plus\textsuperscript{\textregistered}  
-  \item MIFARE DESFire\textsuperscript{\textregistered} 
-  \item MIFARE Ultralight\textsuperscript{\textregistered}  
-\end{itemize}
 
 \par
 Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Data a autentizace jsou šifrovány proprietární šifrou CRYPTO1. Zabezpečení ale není nejsilnější stránka těchto karet. Pro porovnání, i mnohem starší DES šifrování odolá o několik řádů déle útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet, MIFARE Plus a MIFARE DESFire\cite{Mifare_Classic_story}\cite{MIFARE_Classic_Official_about}. 
 \par
-Chytré karty MIFARE Plus jsou nástupcem karet Classic. Zpětná kompabilita je zajištěna podporou starší a méně bezpečnou šifrou CRYPTO1. Je tedy možné postupně modernizovat již zavedené systémy, ikdyž tento způsob neodstraňuje všechna rizika karet Classic. Nad to je implementována mnohem bezpečnější 128 bitová AES šifra\cite{MIFARE_Plus_Official}. Karty MIFARE DESFire už šifrování CRYPTO1 nepodporují vůbec. Podporují ovšem šifrování DES a AES, komunikaci pomocí NFC a až 28 různých aplikací na jedné kartě\cite{MIFARE_DESFire_Official}. V České Republice je používají například České Dráhy ve svém produktu In Karta\cite{Ceske_Drahy_Podminky_InKarta}. Naopak Ultralight jsou velmi levné karty s krátkou životností a malou pamětí. Jsou vhodné pro jednorázové použití jako celodenní jízdenky nebo vstupenky na velké události\cite{MIFARE_Ultralight_Official}. Každá z těchto karet se dělí na další dva až čtyři podtypy, které se liší v různých parametrech, nebo nabízených vlastnostech karty.
+Chytré karty MIFARE Plus\textsuperscript{\textregistered} jsou nástupcem karet Classic. Zpětná kompatibilita je zajištěna podporou starší a méně bezpečnou šifrou CRYPTO1. Je tedy možné postupně modernizovat již zavedené systémy, ikdyž tento způsob neodstraňuje všechna rizika karet Classic. Nad to je implementována mnohem bezpečnější 128 bitová AES šifra\cite{MIFARE_Plus_Official}. Karty MIFARE DESFire\textsuperscript{\textregistered} už šifrování CRYPTO1 nepodporují vůbec. Podporují ovšem šifrování DES a AES, komunikaci pomocí NFC a až 28 různých aplikací na jedné kartě\cite{MIFARE_DESFire_Official}. V České Republice je používají například České Dráhy ve svém produktu In Karta\cite{Ceske_Drahy_Podminky_InKarta}. Naopak Ultralight\textsuperscript{\textregistered} jsou velmi levné karty s krátkou životností a malou pamětí. Jsou vhodné pro jednorázové použití jako celodenní jízdenky nebo vstupenky na velké události\cite{MIFARE_Ultralight_Official}. Každá z těchto karet se dělí na další dva až čtyři podtypy, které se liší v různých parametrech, nebo nabízených vlastnostech karty.
 
 \begin{table}[]
 \begin{tabular}{lllll}
 \hline
 Produkt     & Rychlost přenosu  & Velikost paměti   & Šifrování                 & Životnost \\ \hline
-Classic     & 106 kbps          & 1-4 KB            & CRYPTO1                   & 10 let    \\
-Plus        & 106-848 kbps      & 2-4 KB            & CRYPTO1, 128 bit AES      & 10 let    \\
-DESFire     & 106-848 kbps      & 256 B - 8 KB      & 128 bit AES, 168 bit DES  & 10 let    \\
-UltraLight  & 106 kbps          & 40-144 B          & 112 bit DES               & 2 roky    \\ \hline
+Classic\textsuperscript{\textregistered}     & 106 kbps          & 1-4 KB            & CRYPTO1                   & 10 let    \\
+Plus\textsuperscript{\textregistered}       & 106-848 kbps      & 2-4 KB            & CRYPTO1, 128 bit AES      & 10 let    \\
+DESFire\textsuperscript{\textregistered}     & 106-848 kbps      & 256 B - 8 KB      & 128 bit AES, 168 bit DES  & 10 let    \\
+UltraLight\textsuperscript{\textregistered}  & 106 kbps          & 40-144 B          & 112 bit DES               & 2 roky    \\ \hline
 \end{tabular}
 \caption{Porovnání jednotlivých MIFARE karet\cite{Vedeckotechnicky_sbornik_cd}}
 \label{tabulka_MIFARE_karet}
 \end{table}
 
 \section{Karty MIFARE Classic}
-Jak již bylo řečeno, Classic jsou karty se zabezpečenou pamětí. Data udržuje čip s pamětí typu EEPROM. To je zkratka pro Electrically Erasable Programmable {Read-Only} Memory, tedy elektronicky mazatelná a programovatelná paměť pouze pro čtení. Důležitou vlastností je, že EEPROM je nevolatilní paměť, svůj stav si udrží i bez zdroje napájení\cite{Smart_card_handbook}. Nad pamětí karty Classic lze provádět základní operace jako čtení, zápis, přičtení a odečtení. Paměť karty je rozdělena do sektorů a sektory jsou dále rozděleny do bloků po 16 bytech. Na prvním bloku prvního sektoru je zapsáno UID karty, kontrolní součet a data výrobce. Poslední blok každého sektoru obsahuje dva 48 bitové klíče a podmínky přístupu pro daný sektor. Klíče jsou sdíleny s legitimním čtecím zažízením. To se musí autentizovat alespoň jedním z nich. Podmínky přístupu říkají s kterým klíčem lze provádět jaké operace\cite{Dismantling_Mifare_Classic}\cite{Mifare_Classic_story}.
+Jak již bylo řečeno, Classic jsou karty se zabezpečenou pamětí. Data udržuje čip s pamětí typu EEPROM. To je zkratka pro Electrically Erasable Programmable {Read-Only} Memory, tedy elektronicky mazatelná a programovatelná paměť pouze pro čtení. Důležitou vlastností je, že EEPROM je nevolatilní paměť, svůj stav si udrží i bez zdroje napájení\cite{Smart_card_handbook}. Nad pamětí karty Classic lze provádět základní operace jako čtení, zápis, přičtení a odečtení. Paměť karty je rozdělena do sektorů a sektory jsou dále rozděleny do bloků po 16 bytech. Na prvním bloku prvního sektoru je zapsáno UID karty, kontrolní součet a data výrobce. Poslední blok každého sektoru obsahuje dva 48 bitové klíče a podmínky přístupu pro daný sektor. Klíče jsou sdíleny s legitimním čtecím zařízením. To se musí autentizovat alespoň jedním z nich. Podmínky přístupu říkají s kterým klíčem lze provádět jaké operace\cite{Dismantling_Mifare_Classic}\cite{Mifare_Classic_story}.
 
 
 
