@@ -81,9 +81,9 @@ MIFARE\textsuperscript{\textregistered} je obchodní značka rakouské společno
 \cite{About_MIFARE}\cite{Dismantling_Mifare_Classic}.
 
 \subsection{Standard ISO/IEC 14443}
-Standard ISO 14443 je určena zejména pro identifikační a platební karty. Skládá se ze čtyř částí. První část s označením {ISO 14443-1} popisuje zejména fyzikální charakteristiky karty, její velikost a odolnost proti mechanickému namáhání a působení elektrických a magnetických polí. Druhá část ({ISO 14443-2}) udává charakteristiky elektromagnetického pole, které zajišťuje napájení a obousměrnou komunikaci mezi čtecím zařízením a kartou. Čtecí zařízení je zde označováno jako PCD, tedy Proximity Coupling Device, a karta jako PICC, což je zkratka pro Proximity Integrated Circuit Card. Třetí část ({ISO 14443-3}) uvádí, jak má čtecí zařízení postupovat při inicializaci komunikace s kartou, tedy formát bytů, časování a obsah příkazů REQ a ATQ. Dále popisuje jak detekovat a komunikovat s pouze jednou kartou z mnoha v dosahu zařízení, antikolizní metody. Poslední část ({ISO 14443-4})  popisuje protokoly a příkazy používané na vyšších vrstvách komunikace po inicializaci\cite{ISO14443}.
+Standard ISO 14443 je určena zejména pro identifikační a platební karty. Skládá se ze čtyř částí. První část s označením {ISO 14443-1} popisuje zejména fyzikální charakteristiky karty, její velikost a odolnost proti mechanickému namáhání a působení elektrických a magnetických polí. Druhá část ({ISO 14443-2}) udává charakteristiky elektromagnetického pole, které zajišťuje napájení a obousměrnou komunikaci mezi čtecím zařízením a kartou. Čtecí zařízení je zde označováno jako PCD, tedy Proximity Coupling Device, a karta jako PICC, což je zkratka pro Proximity Integrated Circuit Card. Zde jsou také definovány dvě metody přenosu dat, typ A a typ B. Ty se liší v kódování, a v modulaci frekvencí. Třetí část ({ISO 14443-3}) uvádí, jak má čtecí zařízení postupovat při inicializaci komunikace s kartou, tedy formát bytů, časování a obsah příkazů REQ a ATQ. Dále popisuje jak detekovat a komunikovat s pouze jednou kartou z mnoha v dosahu zařízení, antikolizní metody. Poslední část ({ISO 14443-4})  popisuje protokoly a příkazy používané na vyšších vrstvách komunikace po inicializaci\cite{ISO14443}.
 
-\subsection{Varianty karet Mifare}
+\subsection{Varianty karet MIFARE}
 
 \par
 Karty MIFARE Classic\textsuperscript{\textregistered} byly vyvinuty již v roce 1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Data a autentizace jsou šifrovány proprietární šifrou CRYPTO1. Zabezpečení ale není nejsilnější stránka těchto karet. Pro porovnání, i mnohem starší DES šifrování odolá o několik řádů déle útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet, MIFARE Plus a MIFARE DESFire\cite{Mifare_Classic_story}\cite{MIFARE_Classic_Official_about}. 
@@ -105,11 +105,26 @@ UltraLight\textsuperscript{\textregistered}  & 106 kbps          & 40-144 B     
 
 \section{Karty MIFARE Classic}
 Jak již bylo řečeno, Classic jsou karty se zabezpečenou pamětí. Data udržuje čip s pamětí typu EEPROM. To je zkratka pro Electrically Erasable Programmable {Read-Only} Memory, tedy elektronicky mazatelná a programovatelná paměť pouze pro čtení. Důležitou vlastností je, že EEPROM je nevolatilní paměť, svůj stav si udrží i bez zdroje napájení\cite{Smart_card_handbook}. Nad pamětí karty Classic lze provádět základní operace jako čtení, zápis, přičtení a odečtení. Paměť karty je rozdělena do sektorů a sektory jsou dále rozděleny do bloků po 16 bytech. Na prvním bloku prvního sektoru je zapsáno UID karty, kontrolní součet a data výrobce. Poslední blok každého sektoru obsahuje dva 48 bitové klíče a podmínky přístupu pro daný sektor. Klíče jsou sdíleny s legitimním čtecím zařízením. To se musí autentizovat alespoň jedním z nich. Podmínky přístupu říkají s kterým klíčem lze provádět jaké operace\cite{Dismantling_Mifare_Classic}\cite{Mifare_Classic_story}.
+\par
+\subsection{autentizační protokol}
 
+\subsection{CRYPTO1}
+LFSR = posuvný registr s lineární zpětnou vazbou...
 
+keystream = posloupnost náhodných, nebo pseudonáhodných znaků, které po kombinaci s textem vytvoří zašifrovaný text...
+
+nonce = číslo použité pouze jednou v kryptografické komunikaci, zajišťuje že staré zprávy nemohou být znova použity (replay attack)...
 
 \section{Známé zranitelnosti}
+Nejjednodušším útokem na chytré karty je takzvaný replay attack. K provedení je nutné z komunikace zachytit UID, které posílá karta, a poté toto stejné UID vysílat. Tento útok lze provést nad systémy, které požadují pouze odeslané UID. Karty MIFARE Classic jsou složitější. Útoky na ně se zaměřují na chyby v jejich návrhu, a to zejména na špatně využitý generátor pseudonáhodných čísel\cite{Mifare_Classic_story}. 
+\par
+%\subsection{Získání stavu posuvného registru}
 
+%\subsection{Navrácení stavu posuvného registru}
+
+%\subsection{Vstup filtrační funkce}
+
+%\subsection{Paritní bity}
 %Smart Card Security \cite{Smart_Cards_Tokens_Security}{ - str. 224-254}
 
 
