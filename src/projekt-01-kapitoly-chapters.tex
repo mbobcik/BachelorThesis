@@ -115,36 +115,22 @@ Před jakoukoliv operací nad pamětí karty se čtecí zařízení musí nejprv
 \par
 Na datových blocích jsou uložena libovolná data, nebo jsou konfigurovány jako blok s hodnotou (value block). Při použití hodnotového bloku je 4 bytová, podepsaná hodnota uložena dohromady třikrát. Dvakrát normálně a jednou invertovaně, tedy se všemi bity negovanými. Tyto 4 byty mají uložen nejvýznamnější byte vpravo a nejméně významný vlevo. Na posledních čtyřech bytech je uložena jedno bytová adresa bloku, která může být použita jako ukazatel. Adresa je uložena čtyři krát po sobě, z toho druhý a čtvrtý byte jsou opět negovány\cite{PracticalAttackOnMIFARE}.
 
-\begin{figure*}[H]\centering
-  \centering
-  \scalebox{0.5}{\includegraphics{obrazky-figures/SectorTrailerStructure.png}}\hfill
-  \scalebox{0.5}{\includegraphics{obrazky-figures/ValueBlockStructure.png}}\hfill
-  \caption{Struktura paměti sector traileru a bloku s hodnotou\cite{PracticalAttackOnMIFARE}}
-  \label{obrazekStrukturaPameti}
-\end{figure*}
-xxx
-\begin{figure}[H]
-  \centering
-  \subfloat[]{{\includegraphics[width=5cm]{obrazky-figures/SectorTrailerStructure.png} }}
-  \subfloat[]{{\includegraphics[width=5cm]{obrazky-figures/ValueBlockStructure.png} }}
-  \caption{Struktura paměti sector traileru a bloku s hodnotou\cite{PracticalAttackOnMIFARE}}
-  \label{obrazekStrukturaPameti_db}
-\end{figure}
-xxx
-
 \begin{figure}[H]
 \begin{minipage}{0.48\textwidth}
 \centering
-    \hspace*{-0.85cm}\scalebox{1.2}{\includegraphics [width=0.9\textwidth]{obrazky-figures/SectorTrailerStructure.png}}
+\hspace*{-0.85cm}
+\scalebox{1.2}{
+    \includegraphics [width=0.9\textwidth]{obrazky-figures/SectorTrailerStructure.png}}
 \end{minipage}\hfill
 \begin{minipage}{0.48\textwidth}
 \centering
-\hspace*{-2cm}\scalebox{1.2}{
+\hspace*{-2cm}
+\scalebox{1.2}{
     \includegraphics [width=0.9\textwidth]{obrazky-figures/ValueBlockStructure.png}}
  
 \end{minipage}
     \caption[spectro]{Struktura paměti sector traileru a bloku s hodnotou\cite{PracticalAttackOnMIFARE}}
-    \label{obrazekStrukturaPametionewest}
+    \label{obrazekStrukturaPameti}
 \end{figure}
 
 % subsection struktura_paměti (end)
