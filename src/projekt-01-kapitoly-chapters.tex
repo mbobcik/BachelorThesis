@@ -106,7 +106,28 @@ UltraLight\textsuperscript{\textregistered}  & 106 kbps          & 40-144 B     
 \section{Karty MIFARE Classic}
 Jak již bylo řečeno, Classic jsou karty se zabezpečenou pamětí. Data udržuje čip s pamětí typu EEPROM. To je zkratka pro Electrically Erasable Programmable {Read-Only} Memory, tedy elektronicky mazatelná a programovatelná paměť pouze pro čtení. Důležitou vlastností je, že EEPROM je nevolatilní paměť, svůj stav si udrží i bez zdroje napájení\cite{Smart_card_handbook}. Nad pamětí karty Classic lze provádět základní operace jako čtení, zápis, přičtení a odečtení. Paměť karty je rozdělena do sektorů a sektory jsou dále rozděleny do bloků po 16 bytech. Na prvním bloku prvního sektoru je zapsáno UID karty, kontrolní součet a data výrobce. Poslední blok každého sektoru obsahuje dva 48 bitové klíče a podmínky přístupu pro daný sektor. Klíče jsou sdíleny s legitimním čtecím zařízením. To se musí autentizovat alespoň jedním z nich. Podmínky přístupu říkají s kterým klíčem lze provádět jaké operace\cite{Dismantling_Mifare_Classic}\cite{Mifare_Classic_story}.
 \par
-\subsection{autentizační protokol}
+
+\subsection{Struktura paměti} % (fold)
+\label{sub:struktura_paměti}
+Paměť karet MIFARE Classic je rozdělena do sektorů, a ty jsou dále děleny do bloků po 16 bytech. Karta MIFARE Classic 1k disponuje 16 sektory, a každý z nich má 4 datové bloky. Struktura karet MIFARE Classic 4k je více heteterogení. Prvních 32 sektorů se skládá ze 4 datových bloků a zbývajících 8 sektorů obsahuje bloků 16. První blok prvního sektoru obsahuje speciální data. Na prvních 4 bytech je zapsán unikátní identifikátor (UID) karty. Následuje jednobytová bitová kontrola počtu (dále jen BCC z anglického bit count check). Ta se vypočítá postupným provedením operace XOR nad všemi byty UID. Zbývající byty jsou zaplněna daty výrobce. Celý tento blok je pouze pro čtení. 
+\par
+Před jakoukoliv operací nad pamětí karty se čtecí zařízení musí nejprve autentizovat proti sektoru se kterým chce pracovat. Každý sektor uzavírá takzvaný sector trailer, speciální datový blok. Obsahuje tajné klíče A a B, které jsou použity při autentikaci. Operace, které je možné nad sektorem provádět, jsou v podmínkách přístupu AC. Poslední částí sector traileru je jeden datový byte U, který nemá definovaný účel. Může však být použit pro uložení dat. Sector trailer má zvláštní  podmínky přístupu. Zatímco klíč A není čitelný nikdy, klíči B se čitelnost nastavit může. V takovém případě se jím nedá autentizovat. Čitelností klíče je myšlen přístup čtecího zařízení k tomuto datovému prostoru s právy pro čtení, karta samotná je může číst bez problémů.
+\par
+Na datových blocích jsou uložena libovolná data, nebo jsou konfigurovány jako blok s hodnotou (value block). Při použití hodnotového bloku je 4 bytová, podepsaná hodnota uložena dohromady třikrát. Dvakrát normálně a jednou invertovaně, tedy se všemi bity negovanými. Tyto 4 byty mají uložen nejvýznamnější byte vpravo a nejméně významný vlevo. Na posledních čtyřech bytech je uložena jedno bytová adresa bloku, která může být použita jako ukazatel. Adresa je uložena čtyři krát po sobě, z toho druhý a čtvrtý byte jsou opět negovány\cite{PracticalAttackOnMIFARE}.
+
+\begin{figure*}[h]\centering
+  \centering
+  \includegraphics[width=0.24\linewidth]{obrazky-figures/SectorTrailerStructure.png}\hfill
+  \includegraphics[width=0.24\linewidth]{obrazky-figures/ValueBlockStructure.png}\hfill
+  \caption{Struktura paměti sector traileru a bloku s hodnotou\cite{PracticalAttackOnMIFARE}}
+  \label{obrazekStrukturaPameti}
+\end{figure*}
+
+
+% subsection struktura_paměti (end)
+
+
+\subsection{Autentizační protokol}
 
 \subsection{CRYPTO1}
 LFSR = posuvný registr s lineární zpětnou vazbou...
