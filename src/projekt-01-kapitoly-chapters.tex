@@ -117,7 +117,6 @@ Paměť karet je rozdělena do sektorů, a ty jsou dále děleny do bloků po 16
   \includegraphics[width=0.6\linewidth,height=180px]{obrazky-figures/MemoryStructure.png}\\[1pt]  
   \caption{Struktura paměti karty Classic\cite{PracticalAttackOnMIFARE}}    
   \label{obrazekStrukturaPametiKarty}
-  
 \end{figure*}
 
 \par
@@ -131,11 +130,12 @@ Na datových blocích jsou uložena libovolná data, nebo jsou konfigurovány ja
   \includegraphics[width=1.1\linewidth,height=1.6in]{obrazky-figures/LogicalStructureBetter.png}\\[1pt]  
   \caption{Struktura paměti sector traileru a bloku s hodnotou\cite{PracticalAttackOnMIFARE}}    
   \label{obrazekStrukturaSpecialnichBloku}
-  
 \end{figure*}
 
+Pro manipulace s daty mají karty Classic malou sadu příkazů. Aby mohly být provedeny nad datovým blokem, musí být čtecí zařízení autentizováno pro sektor který tento blok obsahuje. Před každým použitím jakéhokoliv příkazu se kontrolují přístupové podmínky. Ne všechny příkazy mohou být povoleny. Například blok může být nastaven pouze pro čtení, nebo jiný blok s hodnotou může být pouze inkrementován.
+\par
+Příkazy Read a Write čtou nebo zapisují jeden blok. Ten může být jak datový, tak hodnotový. Příkaz Write může být použit k formátování datového bloku na blok s hodnotou, nebo na zapsání libovolných dat do bloku. Další příkazy jsou povoleny pouze na hodnotových blocích. Jsou to Decrement, Increment, Restore a Transfer. Příkazy Increment a Decrement inkrementují nebo dekrementují hodnotu hodnotového bloku a výsledek vloží do paměťového registru. Příkaz Restore načte do registru hodnotu nezměněnou a příkaz Transfer nahraje hodnotu z registru zpět do stejného, nebo jiného bloku\cite{PracticalAttackOnMIFARE}.
 % subsection struktura_paměti (end)
-
 
 \subsection{Autentizační protokol}
 
