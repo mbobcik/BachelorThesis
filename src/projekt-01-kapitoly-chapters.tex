@@ -138,9 +138,42 @@ Příkazy Read a Write čtou nebo zapisují jeden blok. Ten může být jak dato
 % subsection struktura_paměti (end)
 
 \subsection{CRYPTO1}
-Po autentizati je veškerá komunikace mezi čtecím zařízením a kartou šifrována. Pro šifrování se používá proprietární proudová šifra CRYPTO1 navržena přímo firmou NXP\cite{Mifare_Classic_story}. Proudové šifry jsou symetrické šifry kde je důvěrný text neznámé délky (anglicky plaintext) bit po bitu kombinován s proudem pseuhonáhodných šifrovacích bitů (dále jen anglicky keystream). Kombinace se nejčastěji provádí pomocí funkce XOR a jejím výsledkem je zašifrovaný text (cipher text). Šifrovaný text je dešifrován stejnou funkcí a keystreamem. Keystream i důvěrný text musí být stejně dlouhé. Aby bylo možné tohoto dosáhnout s konečnou pamětí, je potřeba keystream generovat. To se děje na základě klíče (anglicky secret key) v generátoru\cite{Stream_ciphers}. Šifra CRYPTO1 jako generátor používá 48 bitový posuvný registr s lineární zpětnou vazbou (dále jen LFSR, z anglického Linear Feedback Shift-register). Každou periodu hodinového signálu se všechny bity registru posunou doleva. Nejlevější bit je zahozen a nový, pravý bit je jako zpětná vazba vypočítán funkcí ${g(x)}$, kde x je aktuální stav registru. V průběhu inicializace se bere v úvahu vstupní bit, který je kombinován funkcí XOR s ${g(x)}$. \cite{Dismantling_Mifare_Classic}.
+Po autentizati je veškerá komunikace mezi čtecím zařízením a kartou šifrována. Pro šifrování se používá proprietární proudová šifra CRYPTO1 navržena přímo firmou NXP\cite{Mifare_Classic_story}. Proudové šifry jsou symetrické šifry kde je důvěrný text neznámé délky (anglicky plaintext) bit po bitu kombinován s proudem pseuhonáhodných šifrovacích bitů (dále jen anglicky keystream). Kombinace se nejčastěji provádí pomocí funkce XOR a jejím výsledkem je zašifrovaný text (cipher text). Šifrovaný text je dešifrován stejnou funkcí a keystreamem. Keystream i důvěrný text musí být stejně dlouhé. Aby bylo možné tohoto dosáhnout s konečnou pamětí, je potřeba keystream generovat. To se děje na základě klíče (anglicky secret key) v generátoru\cite{Stream_ciphers}. Šifra CRYPTO1 jako generátor používá 48 bitový posuvný registr s lineární zpětnou vazbou (dále jen LFSR, z anglického Linear Feedback Shift-register) s generačním polynomem \ref{generatingPolynomial}. Každou periodu hodinového signálu se z dvaceti určitých bitů pomocí filtrační funkce \ref{filterFunctionl} vypočítá bit keystreamu, a potom se všechny bity registru posunou doleva. Nejlevější bit je zahozen a nový, pravý bit je jako zpětná vazba vypočítán funkcí \ref{feedbackFunction}, kde x je aktuální stav registru. V průběhu inicializace se bere v úvahu také vstupní bit, který je kombinován funkcí XOR s \ref{feedbackFunction}. \cite{Dismantling_Mifare_Classic}.
 
-\[g(x) = x^{48} + x^{43} + x^{39} + x^{38} + x^{36} + x^{34} + x^{33} + x^{31} + x^{29} + x^{24} + x^{23} + x^{21} + x^{19} + x^{13} + x^{9} + x^{7} + x^{6} + x^{5} + 1\]
+\begin{equation}
+    \label{generatingPolynomial}
+    g(x) = x^{48} + x^{43} + x^{39} + x^{38} + x^{36} + x^{34} + x^{33} + x^{31} + x^{29} + x^{24} + x^{23} + x^{21} + x^{19} + x^{13} + x^{9} + x^{7} + x^{6} + x^{5} + 1  % generating polynomial z dismantling
+\end{equation}
+\begin{equation}
+    \label{feedbackFunction}
+    L(x_0, x_1 \dots x_{47}) = x_{0} \oplus x_{5} \oplus x_{9} \oplus x_{10} \oplus x_{12} \oplus x_{14} \oplus x_{15} \oplus x_{17} \oplus x_{19} \oplus x_{24} \oplus x_{25} \oplus x_{27} \oplus x_{29} \oplus x_{35} \oplus x_{39} \oplus x_{41} \oplus x_{42} \oplus x_{43}
+\end{equation}
+\begin{equation}
+    \label{filterFunction}
+    f(x_0, x_1 \dots x_{47}) =
+                           f_c(f_a(x_{9},x_{11},x_{13},x_{15}),
+                               f_b(x_{17},x_{19},x_{21},x_{23}),
+                               f_b(x_{25},x_{27},x_{29},x_{31}),
+                               f_a(x_{33},x_{35},x_{37},x_{39}),
+                               f_b(x_{41},x_{43},x_{45},x_{47}))
+\end{equation}
+\begin{equation}
+    \label{filterFunctionC}
+    f_c(y_0,y_1,y_2,y_3,y_4) = 
+    (y_0 \lor ((y_1 \lor y_4) \land (y_3 \oplus y_4))) \oplus 
+    ((y_0 \oplus(y_1 \land y_3)) \land ((y_2 \oplus y_3) \lor (y_1\land y_4)))
+
+\end{equation}
+\begin{equation}
+    \label{filterFunctionA}
+    f_a(y_0,y_1,y_2,y_3) = 
+    ((y_0 \lor y_1) \oplus (y_0 \land y_3)) \oplus (y_2 \land ((y_0 \oplus y_1) \lor y_3))
+\end{equation}
+\begin{equation}
+    \label{filterFunctionB}
+    f_b(y_0,y_1,y_2,y_3) = ((y_0 \land y_1) \lor y_2) \oplus ((y_0 \oplus y_1) \land (y_2 \lor y_3))
+\end{equation}
+
 
 nonce = číslo použité pouze jednou v kryptografické komunikaci, zajišťuje že staré zprávy nemohou být znova použity (replay attack)...
 
