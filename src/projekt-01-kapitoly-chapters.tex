@@ -111,7 +111,7 @@ Jak již bylo řečeno, Classic jsou karty se zabezpečenou pamětí. Data udrž
 \label{sub:struktura_paměti}
 Paměť karet je rozdělena do sektorů, a ty jsou dále děleny do bloků po 16 bytech. Karta MIFARE Classic 1k disponuje 16 sektory, a každý z nich má 4 datové bloky. Struktura karet MIFARE Classic 4k je více heterogenní. Prvních 32 sektorů se skládá ze 4 datových bloků a zbývajících 8 sektorů obsahuje bloků 16. První blok prvního sektoru obsahuje speciální data. Na prvních 4 bytech je zapsán unikátní identifikátor (UID) karty. Následuje jednobytová bitová kontrola počtu (dále jen BCC z anglického bit count check). Ta se vypočítá postupným provedením operace XOR nad všemi byty UID. Zbývající byty jsou zaplněna daty výrobce. Celý tento blok je pouze pro čtení. 
 
-\begin{figure*}[h]\centering
+\begin{figure*}[ht]\centering
   \centering
   \hspace*{-0.07\linewidth}
   \includegraphics[width=0.6\linewidth,height=180px]{obrazky-figures/MemoryStructure.png}\\[1pt]  
@@ -124,7 +124,7 @@ Před jakoukoliv operací nad pamětí karty se čtecí zařízení musí nejprv
 \par
 Na datových blocích jsou uložena libovolná data, nebo jsou konfigurovány jako blok s hodnotou (value block). Při použití hodnotového bloku je 4 bytová, podepsaná hodnota uložena dohromady třikrát. Dvakrát normálně a jednou invertovaně, tedy se všemi bity negovanými. Tyto 4 byty mají uložen nejvýznamnější byte vpravo a nejméně významný vlevo ({little-endian}). Na posledních čtyřech bytech je uložena jedno bytová adresa bloku, která může být použita jako ukazatel. Adresa je uložena čtyři krát po sobě, z toho druhý a čtvrtý byte jsou opět negovány\cite{PracticalAttackOnMIFARE}.
 
-\begin{figure*}[h]\centering
+\begin{figure*}[ht]\centering
   \centering
   \hspace*{-0.07\linewidth}
   \includegraphics[width=1.1\linewidth,height=1.6in]{obrazky-figures/LogicalStructureBetter.png}\\[1pt]  
@@ -138,15 +138,17 @@ Příkazy Read a Write čtou nebo zapisují jeden blok. Ten může být jak dato
 % subsection struktura_paměti (end)
 
 \subsection{CRYPTO1}
-Po autentizati je veškerá komunikace mezi čtecím zařízením a kartou šifrována. Pro šifrování se používá proprietární proudová šifra CRYPTO1 navržena přímo firmou NXP\cite{Mifare_Classic_story}. Proudové šifry jsou symetrické šifry kde je důvěrný text neznámé délky (anglicky plaintext) bit po bitu kombinován s proudem pseuhonáhodných šifrovacích bitů (dále jen anglicky keystream). Kombinace se nejčastěji provádí pomocí funkce XOR a jejím výsledkem je zašifrovaný text (cipher text). Šifrovaný text je dešifrován stejnou funkcí a keystreamem. Keystream i důvěrný text musí být stejně dlouhé. Aby bylo možné tohoto dosáhnout s konečnou pamětí, je potřeba keystream generovat. To se děje na základě klíče (anglicky secret key) v generátoru\cite{Stream_ciphers}. Šifra CRYPTO1 jako generátor používá 48 bitový posuvný registr s lineární zpětnou vazbou (dále jen LFSR, z anglického Linear Feedback Shift-register) s generačním polynomem \ref{generatingPolynomial}. Každou periodu hodinového signálu se z dvaceti určitých bitů pomocí filtrační funkce \ref{filterFunctionl} vypočítá bit keystreamu, a potom se všechny bity registru posunou doleva. Nejlevější bit je zahozen a nový, pravý bit je jako zpětná vazba vypočítán funkcí \ref{feedbackFunction}, kde x je aktuální stav registru. V průběhu inicializace se bere v úvahu také vstupní bit, který je kombinován funkcí XOR s \ref{feedbackFunction}. \cite{Dismantling_Mifare_Classic}.
+Po autentizati je veškerá komunikace mezi čtecím zařízením a kartou šifrována. Pro šifrování se používá proprietární proudová šifra CRYPTO1 navržena přímo firmou NXP\cite{Mifare_Classic_story}. Proudové šifry jsou symetrické šifry kde je důvěrný text neznámé délky (anglicky plaintext) bit po bitu kombinován s proudem pseuhonáhodných šifrovacích bitů (dále jen anglicky keystream). Kombinace se nejčastěji provádí pomocí funkce XOR a jejím výsledkem je zašifrovaný text (cipher text). Šifrovaný text je dešifrován stejnou funkcí a keystreamem. Keystream i důvěrný text musí být stejně dlouhé. Aby bylo možné tohoto dosáhnout s konečnou pamětí, je potřeba keystream generovat. To se děje na základě klíče (anglicky secret key) v generátoru\cite{Stream_ciphers}. Šifra CRYPTO1 jako generátor používá 48 bitový posuvný registr s lineární zpětnou vazbou (dále jen LFSR, z anglického Linear Feedback Shift-register) s generačním polynomem \ref{generatingPolynomial}. Každou periodu hodinového signálu se z dvaceti určitých bitů pomocí filtrační funkce \ref{filterFunction} vypočítá bit keystreamu, a potom se všechny bity registru posunou doleva. Nejlevější bit je zahozen a nový, pravý bit je jako zpětná vazba vypočítán funkcí \ref{feedbackFunction}, kde x je aktuální stav registru. V průběhu inicializace se bere v úvahu také vstupní bit, který je kombinován funkcí XOR s \ref{feedbackFunction}. \cite{Dismantling_Mifare_Classic}.
 
 \begin{multline}
     \label{generatingPolynomial}
-    g(x) = x^{48} + x^{43} + x^{39} + x^{38} + x^{36} + x^{34} + x^{33} + x^{31} + x^{29} + x^{24} + \\ x^{23} + x^{21} + x^{19} + x^{13} + x^{9} + x^{7} + x^{6} + x^{5} + 1  % generating polynomial z dismantling
+    g(x) = x^{48} + x^{43} + x^{39} + x^{38} + x^{36} + x^{34} + x^{33} + x^{31} + x^{29} + x^{24} + \\
+     x^{23} + x^{21} + x^{19} + x^{13} + x^{9} + x^{7} + x^{6} + x^{5} + 1  % generating polynomial z dismantling
 \end{multline}
 \begin{multline}
     \label{feedbackFunction}
-    L(x_0, x_1 \dots x_{47}) = x_{0} \oplus x_{5} \oplus x_{9} \oplus x_{10} \oplus x_{12} \oplus x_{14} \oplus x_{15} \oplus x_{17} \oplus x_{19} \oplus x_{24} \oplus \\ x_{25} \oplus x_{27} \oplus x_{29} \oplus x_{35} \oplus x_{39} \oplus x_{41} \oplus x_{42} \oplus x_{43}
+    L(x_0, x_1 \dots x_{47}) = x_{0} \oplus x_{5} \oplus x_{9} \oplus x_{10} \oplus x_{12} \oplus x_{14} \oplus x_{15} \oplus x_{17} \oplus x_{19} \oplus x_{24} \oplus \\ 
+    x_{25} \oplus x_{27} \oplus x_{29} \oplus x_{35} \oplus x_{39} \oplus x_{41} \oplus x_{42} \oplus x_{43}
 \end{multline}
 \begin{multline}
     \label{filterFunction}
@@ -171,6 +173,15 @@ Po autentizati je veškerá komunikace mezi čtecím zařízením a kartou šifr
     \label{filterFunctionB}
     f_b(y_0,y_1,y_2,y_3) = ((y_0 \land y_1) \lor y_2) \oplus ((y_0 \oplus y_1) \land (y_2 \lor y_3))
 \end{equation}
+
+
+\begin{figure*}[ht]\centering
+  \centering
+  \hspace*{-0.07\linewidth}
+  \includegraphics[width=0.6\linewidth,height=180px]{obrazky-figures/StrukturaSifry.png}\\[1pt]  
+  \caption{Struktura Šifry CRYPTO+\cite{PracticalAttackOnMIFARE}}    
+  \label{obrazekStrukturaSifry}
+\end{figure*}
 
 
 nonce = číslo použité pouze jednou v kryptografické komunikaci, zajišťuje že staré zprávy nemohou být znova použity (replay attack)...
