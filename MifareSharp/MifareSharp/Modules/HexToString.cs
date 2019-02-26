@@ -9,6 +9,7 @@ namespace MifareSharp
 {
     class HexToByteArray
     {
+        // https://stackoverflow.com/a/26304129  Revision 4:
         public static byte[] Convert(string input)
         {
             var outputLength = input.Length / 2;
@@ -21,6 +22,7 @@ namespace MifareSharp
             return output;
         }
 
+        // https://stackoverflow.com/a/632920
         public static string BytesToHex(byte[] barray)
         {
             char[] c = new char[barray.Length * 2];
