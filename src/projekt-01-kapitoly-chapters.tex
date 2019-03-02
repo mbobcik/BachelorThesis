@@ -214,7 +214,17 @@ Pro šifrování karet se používají 48bitové klíče. Tato délka klíčů j
 \par
 \subsection{předvídatelné nonce}
 Aby mohly kryptografické protokoly poskytovat správné zabezpečení, je pro ně zásadní dostatečný generátor pseudonáhodných čísel. Čísla pro MIFARE Classic generuje 16bitový LFSR. Výzvy $n_T$(nonce, viz. \ref{komunikacni_protokol}) použité při autentizaci jsou ale 32bitové. To znamená, že první polovina $n_T$ určuje její zbytek. Sekvence všech výzev se opakuje každých $2^{16} - 1$ cyklů\cite{Cryptanalisis}. Cyklus generátoru karty je rozdílný od čtecího zařízení. Zatímco karta mění stav každou periodu hodinového signálu, čtecí zařízení aktualizuje stav jen při volání generátoru\cite{Dismantling_Mifare_Classic}. Generátor v kartě se resetuje do původního stavu při každém nastartování karty. Výzva poslaná kartou je tedy podmíněna pouze časem mezi zapnutím elektromagnetického pole k nabití karty a momentem odeslání žádosti o autentizaci. Autentizace je tedy zbavena jakékoliv náhodnosti. \parÚtočník s fyzickým přístupem ke kartě ji může \"přinutit\" k odeslání vždy stejné výzvy. K tomu je potřeba po každém pokusu vypnout elektromagnetické pole (zhruba na 30$\mu$s), aby se vybily všechny kondenzátory, znovu zapnout pole, počkat konstantní čas před odesláním požadavku o autentizaci. Druhý způsob spočívá v čekání mezi opětovným odesláním požadavku přesně stanovený čas \emph{t}. Stav generátoru pseudonáhodných čísel se mění každých 9,44$\mu$s. Na vystřídání všech stavů tak stačí pouze $(2^{16} - 1) * 9,44\mu$s $= 618,650ms$. Velikost výzvy je dvojnásobná oproti LFSR, výsledný čas \emph{t} je tedy poloviční $t = 618ms/2 = 309ms$ \cite{Wirelessly_Pickpocketing}. V novější verzi karet Classic EV1 je tento nedostatek odstraněn nahrazením generátoru pseudonáhodných čísel generátorem náhodných čísel\cite{MIFARE_Classic_Official_about}.
-%\subsection{Získání stavu posuvného registru}
+
+\subsection{Paritní bity}
+Další slabinou karet MIFARE Classic je jejich řešení paritních bitů. Podle standardu ISO 14443 musí každý odeslaný byte následovat lichý paritní bit. Karty Classic sice s každým odeslaným bytem posílají paritní bit, ten je ale vypočítán už z důvěrného textu (plaintext) a ne z textu šifrovaného (ciphertext), který je skutečně posílán komunikační vrstvou. Kromě toho, odeslané paritní bity jsou šifrovány stejným šifrovacím bitem (keystream), který je použit pro šifrování dalšího bitu plaintextu (viz \ref{parityDiagram})\cite{Cryptanalisis}.
+
+\begin{figure*}[ht]\centering
+  \centering
+  \hspace*{-0.08\linewidth}
+  \includegraphics[width=\linewidth]{obrazky-figures/parityBits.png}\\[1pt]  
+  \caption{Šifrování paritních bitů \cite{Cryptanalisis}}    
+  \label{parityDiagram}
+\end{figure*}
 
 %\subsection{Navrácení stavu posuvného registru}
 
