@@ -129,7 +129,6 @@ Na datových blocích jsou uložena libovolná data, nebo jsou konfigurovány ja
 
 \begin{figure*}[ht]\centering
   \centering
-  \hspace*{-0.07\linewidth}
   \includegraphics[width=\linewidth]{obrazky-figures/LogicalStructureBetter.png}\\[1pt]  
   \caption{Struktura paměti sector traileru a bloku s hodnotou\cite{PracticalAttackOnMIFARE}}    
   \label{obrazekStrukturaSpecialnichBloku}
@@ -176,19 +175,18 @@ Po autentizaci je veškerá komunikace mezi čtecím zařízením a kartou šifr
 
 \begin{figure*}[ht]\centering
   \centering
-  \hspace*{-0.08\linewidth}
+  
   \includegraphics[width=\linewidth]{obrazky-figures/StrukturaSifry.png}\\[1pt]  
   \caption{Struktura šifry CRYPTO1\cite{Wirelessly_Pickpocketing}}    
   \label{obrazekStrukturaSifry}
 \end{figure*}
 
 \par
-Inicializace šifry probíhá při autentizaci karty a čtecího zařízení. Poté co karta odešle výzvu $n_T$ (viz \ref{autentizace}) je do registru šifry obou zařízení načten sdílený, tajný klíč K. Zde přichází na řadu vstupní bit, který se v tomto momentu vypočítá jako $i = n_T \oplus uid$. Všech 32 bitů tohoto vztahu se naplní do registru spolu s bity zpětné vazby LFSR. Následně se vstupní bity změní na bity výzvy čtecího zařízení $n_R$ a jsou aplikovány stejným způsobem, tedy $g(x) \plus i$. Protože šifrování komunikace začíná při odesílání $n_R$, dřívější bity $n_R$ ovlivňují šifrování pozdějších bitů $n_R$. Na diagramu \ref{obrazekInicializaceSifry} je znázorněna incializace šifry na obou zařízeních. Jediný rozdíl je v tom, že čtecí zařízení nejprve vygeneruje $n_R$ a poté spočítá ${\{n_R\} = n_R \oplus ks}$, zatímco karta přijme $\{n_R\}$ a teprve spočítá $n_R$. Od této chvíle je inicializace hotová a vstupní bit šifry není nadále potřeba\cite{Dismantling_Mifare_Classic}.
+Inicializace šifry probíhá při autentizaci karty a čtecího zařízení. Poté co karta odešle výzvu $n_T$ (viz \ref{autentizace}) je do registru šifry obou zařízení načten sdílený, tajný klíč K. Zde přichází na řadu vstupní bit, který se v tomto momentu vypočítá jako $i = n_T \oplus {uid}$. Všech 32 bitů tohoto vztahu se naplní do registru spolu s bity zpětné vazby LFSR. Následně se vstupní bity změní na bity výzvy čtecího zařízení $n_R$ a jsou aplikovány stejným způsobem, tedy $g(x) \oplus i$. Protože šifrování komunikace začíná při odesílání $n_R$, dřívější bity $n_R$ ovlivňují šifrování pozdějších bitů $n_R$. Na diagramu \ref{obrazekInicializaceSifry} je znázorněna inicializace šifry na obou zařízeních. Jediný rozdíl je v tom, že čtecí zařízení nejprve vygeneruje $n_R$ a poté spočítá ${\{n_R\} = n_R \oplus ks}$, zatímco karta přijme $\{n_R\}$ a teprve spočítá $n_R$. Od této chvíle je inicializace hotová a vstupní bit šifry není nadále potřeba\cite{Dismantling_Mifare_Classic}.
 
 \begin{figure*}[ht]\centering
   \centering
-  \hspace*{-0.08\linewidth}
-  \includegraphics[width=\linewidth]{obrazky-figures/cryptoInitialization.png}\\[1pt]  
+  \includegraphics[width=0.7\linewidth]{obrazky-figures/cryptoInitialization.png}\\[1pt]  
   \caption{Diagram inicializace šifry CRYPTO1, kde ks je šifrovací proud (keystream)\cite{Dismantling_Mifare_Classic}}    
   \label{obrazekInicializaceSifry}
 \end{figure*}
@@ -205,7 +203,6 @@ Na tento požadavek karta pošle výzvu (anglicky challenge)~${n_T}$\footnotemar
 
 \begin{figure*}[ht]\centering
   \centering
-  \hspace*{-0.08\linewidth}
   \includegraphics[width=\linewidth]{obrazky-figures/commDiagram.png}\\[1pt]  
   \caption{Antikolizní a autentizační fáze komunikace. Šifrované zprávy jsou ve složených závorkách.\cite{Dismantling_Mifare_Classic}}    
   \label{obrazekZacatekKomunikace}
@@ -235,7 +232,6 @@ Další slabinou karet MIFARE Classic je jejich řešení paritních bitů. Podl
 Díky tomuto je s každým odeslaným bytem vyzrazena jednobitová informace o důvěrném textu\cite{Dismantling_Mifare_Classic}. 
 \begin{figure*}[ht]\centering
   \centering
-  \hspace*{-0.08\linewidth}
   \includegraphics[width=\linewidth]{obrazky-figures/parityBits.png}\\[1pt]  
   \caption{Šifrování paritních bitů \cite{Cryptanalisis}}   
   \label{parityDiagram}
