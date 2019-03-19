@@ -256,14 +256,24 @@ Za předpokladu, že útočník zná a je už ověřen vůči nějakému bloku k
 Tuto slabinu využívají například útoky popsané v \cite{Cryptanalisis} a v \cite{Wirelessly_Pickpocketing} kde je útok nazván vnořeným útokem (nested attack).
 
 %                               NADPIS                      
-\chapter{Zařízení Chameleon Mini}
-\label{zarizeni_chameleon_mini}
+\chapter{Chameleon Mini}
+\label{chameleon_mini}
 
+V této kapitole bude představeno zařízení Chameleon Mini, jeho hardware, firmware a s tím i podporovanou sadu příkazů.
 
+\par
 
+Chameleon Mini je zařízení velikosti běžné kreditní karty od německé firmy Kasper \& Oswald. Zařízení je navrženo jako univerzální nástroj pro praktickou bezpečnostní analýzu NFC\footnotemark a RFID systémů, penetrační testování nebo různé jiné aplikace koncových uživatelů. Tato volně programovatelná platvorma umožňuje vytvořit klony existujících komerčních chytrých karet, a to včetně kryptografických funkcí a unikátních identifikátorů (UID). Dále může být využito v různých scénářích útoků, na odposlech NFC a RFID komunikace nebo funkční testování RFID vybavení. O bezstarostné nahrávání firmware se stará USB zavaděč. Pomocí praktické a lehce zapamatovatelné příkazové sady lze měnit nastavení a chování zařízení. Zároveň lze do vnitřní paměti uložit a virtualizovat až osm bezkontaktních karet. 
+\footnotetext{z anglického {Near-field} communication}
 
+\section{Hardware}
+Zařízení je prodáváno jako deska plošných spojů. Nejnápadnější částí je pak anténa schopna generovat RFID pole o frekvenci 13,56MHz. Chameleon Mini je schopen emulovat karty standardů ISO 14443, ISO 15693, NFC tagy a díky RFID poli dokáže vystupovat také jako aktivní čtecí zařízení. Pro praktické a bezdrátové použití lze pomocí USB nabít lithium-iontovou baterii přímo na desce. Po plném nabití je možné zařízení používat zhruba hodinu. Interakci v bezdrátovém módu umožňují dvě integrované, nastavitelné tlačítka a LED diody.
+\par
+Vnitřní logiku po hardware stránce zajišťuje mikrokontroler Atmel ATXMega128A4U. Ten poskytuje funkce pro {radio-frekvenční} kódování a dekódování, rozhraní USB a stavový automat, kterým je řízen chod zařízení. Mikrokontroler obsahuje podporu AES a DES na hardware úrovni. Výpočty těchto kryptografických algoritmů jsou tak podle výrobce až třikrát rychlejší než na originálních kartách (MIFARE DESfire).
 
+\section{Firmware}
 
+\subsection{Podporované příkazy}
 
 \chapter{Závěr}
 \label{zaver}
