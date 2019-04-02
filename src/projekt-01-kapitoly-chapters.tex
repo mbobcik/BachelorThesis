@@ -263,10 +263,10 @@ V této kapitole bude představeno zařízení Chameleon Mini, jeho hardware, fi
 
 \par
 
-Chameleon Mini je zařízení velikosti běžné kreditní karty od německé firmy Kasper \& Oswald. Zařízení je navrženo jako univerzální nástroj pro praktickou bezpečnostní analýzu NFC\footnotemark a RFID systémů, penetrační testování nebo různé jiné aplikace koncových uživatelů. Tato volně programovatelná platforma umožňuje emulovat existující komerční chytré karty, a to včetně kryptografických funkcí a unikátních identifikátorů (UID). Dále může být využito v různých scénářích útoků, na odposlech NFC a RFID komunikace nebo funkční testování RFID vybavení. O bezstarostné nahrávání firmware se stará USB zavaděč. Pomocí praktické a lehce zapamatovatelné příkazové sady lze měnit nastavení a chování zařízení. Zároveň dokáže do vnitřní paměti uložit a virtualizovat až osm bezkontaktních karet.\cite{ChameleonKickStarter} 
+Chameleon Mini je zařízení velikosti běžné kreditní karty německé firmy Kasper \& Oswald.  Zařízení je navrženo jako univerzální nástroj pro praktickou bezpečnostní analýzu NFC\footnotemark a RFID systémů, penetrační testování nebo různé jiné aplikace koncových uživatelů. Tato volně programovatelná platforma umožňuje emulovat existující komerční chytré karty, a to včetně kryptografických funkcí a unikátních identifikátorů (UID). Dále může být využito v různých scénářích útoků, na odposlech NFC a RFID komunikace nebo funkční testování RFID vybavení. O bezstarostné nahrávání firmware se stará USB zavaděč. Pomocí praktické a lehce zapamatovatelné příkazové sady lze měnit nastavení a chování zařízení. Zároveň dokáže do vnitřní paměti uložit a virtualizovat až osm bezkontaktních karet.\cite{ChameleonKickStarter} 
 \footnotetext{z anglického {Near-field} communication}
 \par 
-Projekt Chameleon Mini je financován pomocí crowdfundingu na platformě KickStarter. V současné době se  Veškerý oficiální firmware, schémata tištěných spojů nebo podpůrné nástroje dostupné v {open-source} repozitáři služby GitHub\footnotemark.
+Projekt Chameleon Mini byl založen na Porůrské univerzitě v Bochumi a je financován pomocí crowdfundingu na platformě KickStarter. V současné době se veškerý oficiální firmware, schémata tištěných spojů nebo podpůrné nástroje dostupné v {open-source} repozitáři služby GitHub\footnotemark.\cite{ChameleonDocs}
 \footnotetext{\url{https://github.com/emsec/ChameleonMini}}
 
 \section{Hardware}
@@ -286,6 +286,7 @@ Chameleon Mini připojený pomocí USB do počítače je zobrazeno jako sériov�
 \end{itemize}
 Chameleon poskytuje osm slotů, které je možno nakonfigurovat jako aktivní čtecí zařízení, pasivní zařízení pro odposlech komunikace (sniffing), nebo pro uložení různých virtualizovaných karet. V každém slotu je uložena jeho konfigurace a případně obsah karty. Číslo právě aktivního slotu zjistí příkaz \verb|Setting?|. Jiný slot aktivujeme pomocí \verb|Setting=X|, kde \emph{X} je číslo od 1 do 8. Příkaz \verb|Config?| vrátí konfiguraci aktivního slotu. Všechny možné konfigurace vyjmenuje \verb|Config=?| a opět, změnu konfigurace například na emulaci karty Mifare Classic provede příkaz \verb|Config=MF_CLASSIC_1K|(viz. \ref{komunikaceChameleon}). \par 
 Každý odeslaný příkaz následuje odpověď zařízení s číslem a zprávou stavu. První cifra třímístného čísla stavu ukazuje vážnost odpovědi. Zprávy s číslem začínající cifrou "1" jsou spíše  informačního charakteru, zatímco cifra "2" značí chybu.\cite{ChameleonDocs}
+
 \begin{lstlisting}[caption=Záznam komunikace se zařízením Chameleon Mini, label={komunikaceChameleon}]
 Setting?
 101:OK WITH TEXT
@@ -301,6 +302,8 @@ NONE,MF_ULTRALIGHT,MF_ULTRALIGHT_EV1_80B,MF_ULTRALIGHT_EV1_164B,MF_CLASSIC_1K,MF
 Config=MF_CLASSIC_1K
 100:OK
 \end{lstlisting}
+
+Slotu s konfigurací virtualizace karty můžeme nastavit libovolné UID příkazem \verb|UID=<UID>|. Stejně jako v předchozím případě, neznámé UID zjistíme voláním \verb|UID?|.
 
 \chapter{Závěr}
 \label{zaver}
