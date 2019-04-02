@@ -274,9 +274,33 @@ Zařízení je prodáváno jako deska plošných spojů. Nejnápadnější čás
 \par
 Vnitřní logiku po hardware stránce zajišťuje mikrokontroler Atmel ATXMega128A4U. Ten poskytuje funkce pro {radio-frekvenční} kódování a dekódování, rozhraní USB a je v něm nahraný stavový automat, kterým je řízen chod zařízení. Mikrokontroler obsahuje podporu AES a DES na hardware úrovni. Výpočty těchto kryptografických algoritmů jsou tak podle výrobce až třikrát rychlejší než na originálních kartách (MIFARE DESfire). Jako operační paměť slouží 128kB Flash paměť, 2kB EEPROM paměť a 8kB SRAM paměť. Do volatilní paměti SRAM je ukládána odposlouchaná komunikace. Tu je možné zapsat do nevolatilní 128kb FRAM paměti, která slouží také jako uložiště pro virtuální karty.\cite{ChameleonKickStarter}
 
-\section{Firmware}
-
-\subsection{Podporované příkazy}
+\section{Podporované příkazy}
+Ke komunikaci se zařízením Chameleon Mini lze použít příkazovou řádku, emulátor terminálu nebo vlastní skripty a aplikace. Struktura firmware umožňuje jednoduchou rozšiřitelnost o nové, nepodporované standardy a karty. Tlačítkům a LED diodám je možné přiřadit různé funkce. Přenos dat mezi zařízením a počítačem přes USB zajišťuje protokol {X-MODEM}. \cite{ChameleonKickStarter}
+\par
+Chameleon Mini připojený pomocí USB do počítače je zobrazeno jako sériové zařízení. Zařízení se nastavuje a ovládá příkazy posílanými přes rozhraní příkazové řádky. K tomuto rozhraní jsem přistupoval pomocí programu Putty. Příkazy je možné použít se čtyřmi různými syntaxemi.
+\begin{itemize}
+  \item <Příkaz>=<Hodnota> Nastaví parametr zařízení
+  \item <Příkaz>=? Vypíše seznam všech možných hodnot parametru
+  \item <Příkaz>? Vrátí aktuální hodnotu parametru
+  \item <Příkaz> Provede funkci a vypíše možnou odpověď
+\end{itemize}
+Chameleon poskytuje osm slotů, které je možno nakonfigurovat jako aktivní čtecí zařízení, pasivní zařízení pro odposlech komunikace (sniffing), nebo pro uložení různých virtualizovaných karet. V každém slotu je uložena jeho konfigurace a případně obsah karty. Číslo právě aktivního slotu zjistí příkaz \verb|Setting?|. Jiný slot aktivujeme pomocí \verb|Setting=X|, kde \emph{X} je číslo od 1 do 8. Příkaz \verb|Config?| vrátí konfiguraci aktivního slotu. Všechny možné konfigurace vyjmenuje \verb|Config=?| a opět, změnu konfigurace například na emulaci karty Mifare Classic provede příkaz \verb|Config=MF_CLASSIC_1K|(viz. \ref{komunikaceChameleon}). \par 
+Každý odeslaný příkaz následuje odpověď zařízení s číslem a zprávou stavu. První cifra třímístného čísla stavu ukazuje vážnost odpovědi. Zprávy s číslem začínající cifrou "1" jsou spíše  informačního charakteru, zatímco cifra "2" značí chybu.\cite{ChameleonDocs}
+\begin{lstlisting}[caption=Záznam komunikace se zařízením Chameleon Mini, label={komunikaceChameleon}]
+Setting?
+101:OK WITH TEXT
+2
+Setting=4
+100:OK
+Config?
+101:OK WITH TEXT
+NONE
+Config=?
+101:OK WITH TEXT
+NONE,MF_ULTRALIGHT,MF_ULTRALIGHT_EV1_80B,MF_ULTRALIGHT_EV1_164B,MF_CLASSIC_1K,MF_CLASSIC_1K_7B,MF_CLASSIC_4K,MF_CLASSIC_4K_7B,ISO14443A_SNIFF,ISO14443A_READER
+Config=MF_CLASSIC_1K
+100:OK
+\end{lstlisting}
 
 \chapter{Závěr}
 \label{zaver}
