@@ -2,3 +2,9 @@
 MifareSharp/MifareSharp/bin/
 
 MifareSharp/MifareSharp/obj/
+
+MifareSharp/MifareModules/obj/
+
+\.vs/
+
+MifareSharp/CryptoAnalysis/obj/

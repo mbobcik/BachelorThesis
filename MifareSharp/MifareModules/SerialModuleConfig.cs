@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.IO.Ports;
 
 
-namespace MifareSharp
+namespace MifareModules
 {
-    class SerialModuleConfig
+    public class SerialModuleConfig
     {
         public string PortName = "COM3";
         public int BaudRate = 9600;

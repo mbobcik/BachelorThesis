@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MifareSharp", "MifareSharp\MifareSharp.csproj", "{4790BA29-316E-4E61-9061-4F09BC8A8ADC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChameleonProxy", "MifareSharp\ChameleonProxy.csproj", "{4790BA29-316E-4E61-9061-4F09BC8A8ADC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MifareModules", "MifareModules\MifareModules.csproj", "{48935BA1-2964-491A-A9C0-FF822DAFBA45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoAnalysis", "CryptoAnalysis\CryptoAnalysis.csproj", "{A933FD23-AAA1-4EE4-B637-98C51CFE0D5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{4790BA29-316E-4E61-9061-4F09BC8A8ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4790BA29-316E-4E61-9061-4F09BC8A8ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4790BA29-316E-4E61-9061-4F09BC8A8ADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48935BA1-2964-491A-A9C0-FF822DAFBA45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48935BA1-2964-491A-A9C0-FF822DAFBA45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48935BA1-2964-491A-A9C0-FF822DAFBA45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48935BA1-2964-491A-A9C0-FF822DAFBA45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A933FD23-AAA1-4EE4-B637-98C51CFE0D5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A933FD23-AAA1-4EE4-B637-98C51CFE0D5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A933FD23-AAA1-4EE4-B637-98C51CFE0D5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A933FD23-AAA1-4EE4-B637-98C51CFE0D5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -299,8 +299,8 @@ NONE
 Config=?
 101:OK WITH TEXT
 NONE,MF_ULTRALIGHT,MF_ULTRALIGHT_EV1_80B,MF_ULTRALIGHT_EV1_164B,MF_CLASSIC_1K,
-MF_CLASSIC_1K_7B,MF_CLASSIC_4K,MF_CLASSIC_4K_7B,
-ISO14443A_SNIFF,ISO14443A_READER
+MF_CLASSIC_1K_7B,MF_CLASSIC_4K,MF_CLASSIC_4K_7B,ISO14443A_SNIFF,
+ISO14443A_READER
 Config=MF_CLASSIC_1K
 100:OK
 \end{lstlisting}
@@ -308,10 +308,9 @@ Config=MF_CLASSIC_1K
 Slotu s konfigurací virtualizace karty můžeme nastavit libovolné UID příkazem \verb|UID=<UID>|. Stejně jako v předchozím případě, neznámé UID zjistíme voláním \verb|UID?|. V některých případech je potřeba nastavit náhodné UID virtualizované karty, například jako opatření proti ukládání škodlivých UID na černou listinu. Toho lze docílit nastavením jednoho z tlačítek \verb|Rbutton=UID_Random| jeho zmáčknutím. V rozhraní příkazové řádky tato funkce (zatím) zveřejněná není, ale pomocí tlačítka lze UID měnit přímo v terénu bez připojení k počítači.\par
 Při komunikací může dojít ke změně paměti virtualizované karty, například snížení kreditu na kartě. Obnovením paměti karty by se kredit dostal do původního stavu a šel by znovu použít. Voláním příkazu \verb|Store| se aktuální stav karty uloží z FRAM do paměti nevolatilní paměti Flash. Po domnělé změně stavu karty \verb|Recall| načte kartu zpět do FRAM, připravenou k použití v původním stavu. Tato funkcionalita lze provázat s dvěma tlačítky na zažízení příkazy \verb|Rbutton=Store_Mem|, respektive \verb|Rbutton=Recall_Mem|.\par
 Voláním příkazu \verb|Download| je možné stáhnout obraz karty ze zařízení. Samotný přenos začne po navázání spojení protokolem {X-Modem}. Připojení tímto protokolem podporuje například program Tera Term. Mimo to se obraz karty dá stáhnout pomocí programu Chameleon Mini GUI\footnotemark, který poskytuje přehledné grafické rozhraní pro manipulaci se zařízením. Stažený obraz karty do aktivního slotu zařízení načte příkaz \verb|Upload|, který opět počká na připojení {X-Modem}. Příkazem \verb|Clear| se smaže celý obsah karty aktivního slotu.\par
+\footnotetext{\url{https://github.com/iceman1001/ChameleonMini-rebootedGUI}}
 Chameleon Mini v módu čtecího zařízení nabízí trochu jinou funkcionalitu, a tedy i jiné příkazy, než v módu virtualizace karet. Mód čtecího zařízení aktivuje příkaz \verb|Config=ISO14443A_READER|. Tento mód je aktivován nad aktivním slotem. Jakékoliv data v tomto slotu jsou smazána. Tato konfigurace slotu neovlivňuje jíné sloty. Je tedy možné mít například první slot čtecí, a ostatní emulující různé karty. \par
 Základní příkaz této konfigurace je příkaz \verb|Send| případně \verb|Send_Raw|, které slouží k odesílání dat kartě. Příkaz \verb|Send|, pokud je parametr delší než jeden byte, přidá paritní bity a odešle zprávu. Naopak příkaz \verb|Send_Raw| předpokládá, že paritní bity jsou v parametru zprávy už obsaženy a odešle ji rovnou. Oba příkazy mohou mít jeden, nebo dva parametry. Parametry jsou odděleny mezerou a nejsou uzavřeny v žádných závorkách. Jedním parametrem je předána zpráva k odeslání ve formě hexadecimálního čísla. V případě dvou parametrů je zpráva až druhý parametr. Prvním je předán počet bitů k odeslání opět ve tvaru hexadecimálního čísla. Po odeslání zprávy zařízení chvíli počká na odpověď, a pokud ji přijme, zbaví ji paritních bitů a na příkazovou řádku vytiskne přijatou zprávu, její délku v bitech a buď \emph{PARITY OK}, nebo \emph{PARITY ERR} v závislosti na výsledku kontroly parity. Pokud žádnou odpověď neobdrží, vrátí \emph{NO DATA}.\par
-
-\footnotetext{https://github.com/iceman1001/ChameleonMini-rebootedGUI}
 Jak již bylo zmíňeno, pro interakci s uživatelem jsou na zařízení dvě konfigurovatelná tlačítka, levé a pravé. Kromě toho, Chameleon rozlišuje mezi dlouhým a krátkým stiskem tlačítek, kdy stisk tlačítka delší než $1.28ms$ značí dlouhý stisk. Dohromady jsou tedy čtyři konfigurační příkazy těchto tlačítek, a to:
 \begin{itemize}
 \item Lbutton

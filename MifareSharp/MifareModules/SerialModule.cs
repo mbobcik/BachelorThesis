@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.IO.Ports;
 using System.Threading;
 
-namespace MifareSharp
+namespace MifareModules
 {
-    class SerialModule
+    public class SerialModule
     {
         private SerialPort serialPort;
         public Boolean Verbose { get; set; } = true;

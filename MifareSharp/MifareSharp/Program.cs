@@ -6,48 +6,33 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Threading;
 using System.IO;
+using MifareModules;
 
-namespace MifareSharp
+namespace ChameleonProxy
 {
     class Program
     {
         static void Main(string[] args)
         {
             Stopwatch sw = new Stopwatch();
-            SerialModule s = new SerialModule()
+
+            SerialModuleConfig chameleon1Config = new SerialModuleConfig();
+            SerialModule serial1 = new SerialModule(chameleon1Config)
             {
                 Verbose = false
             };
-            ChameleonModule m = new ChameleonModule(s);
-            CardModule card = new CardModule(m) { Verbose = true};
-            int waitTime = 3;
-            for (int i = 0; i < 20; i++)
+
+            ChameleonModule chameleon1 = new ChameleonModule(serial1);
+            CardModule card = new CardModule(chameleon1) { Verbose = true };
+
+
+            SerialModuleConfig chameleon2config = new SerialModuleConfig()
             {
-                sw.Start();
-                m.TurnElectromagnetic(Field.On);
-                Thread.Sleep(waitTime+2);
+                PortName = "COM4"
+            };
+            SerialModule serial2 = new SerialModule(chameleon2config);
+            ChameleonModule chameleon2 = new ChameleonModule(serial2);
 
-                card.ReqA();
-                Thread.Sleep(waitTime);
-                try
-                {
-                    string uid = card.Select();
-                } catch (NoDataException)
-                {
-                    Console.WriteLine("NO DATA");
-                    continue;
-                }
-                Thread.Sleep(waitTime);
-                card.SelectUid(card.UID);
-                string nonce = card.AuthenticateForBlock("00");
-
-
-                m.TurnElectromagnetic(Field.Off);
-                sw.Stop();
-                Console.WriteLine("nonce: {0} Elapsed: {1}ms", nonce, sw.ElapsedMilliseconds);
-                sw.Reset();
-                Thread.Sleep(waitTime+2);
-            }
 
             Console.ReadLine();
 
