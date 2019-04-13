@@ -13,19 +13,27 @@ namespace CryptoAnalysis
     {
         static void Main(string[] args)
         {
-            int repeat = 200;
-            int waitTime = 3;
+            var parsedArgs = argParse(args);
+
+            int repeat = int.Parse(parsedArgs["repeat"]);
+            int waitTime = int.Parse(parsedArgs["waitTime"]);
 
             Stopwatch sw = new Stopwatch();
 
-            SerialModuleConfig chameleon1Config = new SerialModuleConfig();
+            SerialModuleConfig chameleon1Config = new SerialModuleConfig()
+            {
+                PortName = parsedArgs["portName"]
+            };
             SerialModule serial1 = new SerialModule(chameleon1Config)
             {
                 Verbose = false
             };
 
             ChameleonModule chameleon1 = new ChameleonModule(serial1);
-            CardModule card = new CardModule(chameleon1) { Verbose = true };
+            CardModule card = new CardModule(chameleon1)
+            {
+                Verbose = false
+            };
 
             List<string> nonces = new List<string>(repeat);
 
@@ -53,6 +61,7 @@ namespace CryptoAnalysis
 
                 chameleon1.TurnElectromagnetic(Field.Off);
                 sw.Stop();
+                if (!string.Equals(nonce, "NO DATA")) ;
                 nonces.Add(nonce);
                 Console.WriteLine("nonce: {0} Elapsed: {1}ms", nonce, sw.ElapsedMilliseconds);
                 sw.Reset();
@@ -60,7 +69,7 @@ namespace CryptoAnalysis
             }
 
             var duplicateNonces = nonces.GroupBy(x => x).Where(x => x.Count() > 1).Select(x => x.Key);
-            if(duplicateNonces.Count() > 0)
+            if (duplicateNonces.Count() > 0)
             {
                 Console.WriteLine("Duplicate nonces:");
                 foreach (string nonce in duplicateNonces)
@@ -72,6 +81,45 @@ namespace CryptoAnalysis
             {
                 Console.WriteLine("There were no duplicate nonces.");
             }
+
+            if(Debugger.IsAttached)
+                Console.ReadLine();
         }
+
+        private static Dictionary<string, string> argParse(string[] args)
+        {
+            var result = new Dictionary<string, string>()
+            {
+                {"portName", "COM3"},
+                {"waitTime", "2" },
+                {"repeat", "100" }
+            };
+
+            if (args == null || args.Count() <= 0)
+                return result;
+
+            if (Array.IndexOf(args, "-c") >= 0)
+            {
+                result["portName"] = args[Array.IndexOf(args, "-c") + 1];
+            }
+            if (Array.IndexOf(args, "-w") >= 0)
+            {
+                result["waitTime"] = args[Array.IndexOf(args, "-w") + 1];
+            }
+            if (Array.IndexOf(args, "-r") >= 0)
+            {
+                result["repeat"] = args[Array.IndexOf(args, "-r") + 1];
+            }
+            if (args.Contains("-h") || args.Contains("\\?"))
+            {
+                Console.WriteLine(@"This is Help...
+-p portName default:COM3
+-w waiting Time between messages default:2
+-r number of attempts default:100");
+                Environment.Exit(0);
+            }
+            return result;
+        }
+
     }
 }
