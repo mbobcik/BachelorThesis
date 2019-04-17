@@ -7,11 +7,14 @@ using System.Diagnostics;
 using System.Threading;
 using System.IO;
 using MifareModules;
+using System.Net;
+using System.Net.Sockets;
 
 namespace ChameleonProxy
 {
     class Program
     {
+        const int bytesize = 1024 * 1024;
         static void Main(string[] args)
         {
             // nastavit parametry
@@ -37,11 +40,54 @@ namespace ChameleonProxy
 
         private static void NetworkAttackProxy(ProgramArguments pArgs)
         {
+            SerialModuleConfig chameleon2config = new SerialModuleConfig()
+            {
+                PortName = pArgs.ProxyComName,
+            };
+            SerialModule serial2 = new SerialModule(chameleon2config)
+            {
+                Verbose = false,
+            };
+            ChameleonModule proxy = new ChameleonModule(serial2)
+            {
+                Verbose = true,
+            };
+            Console.WriteLine("** Chameleon Connected  via {0} **", pArgs.ProxyComName);
 
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse(pArgs.MoleIp), int.Parse(pArgs.MolePort));
+            TcpClient client = new TcpClient(ep);
+            Console.WriteLine("** Client connected to {0}:{1}", ep.Address, ep.Port);
         }
 
         private static void NetworkAttackMole(ProgramArguments pArgs)
         {
+            SerialModuleConfig chameleon1Config = new SerialModuleConfig()
+            {
+                PortName = pArgs.MoleComName,
+            };
+
+            SerialModule serial1 = new SerialModule(chameleon1Config)
+            {
+                Verbose = false,
+            };
+
+            ChameleonModule mole = new ChameleonModule(serial1)
+            {
+                Verbose = true,
+            };
+            CardModule cardMole = new CardModule(mole) { Verbose = true };
+            Console.WriteLine("** Chameleon Connected  via {0} **", pArgs.MoleComName);
+
+
+            TcpListener listener = new TcpListener(IPAddress.Any, int.Parse(pArgs.MolePort));
+            listener.Start();
+            Console.WriteLine("** Server Listening for requests at {0}:{1} **\nWaiting for proxy connection...", pArgs.MoleIp, pArgs.MolePort);
+
+            listener.AcceptTcpClient();
+            Console.WriteLine("Proxy connected!");
+            Console.ReadLine();
+
+
 
         }
 
@@ -63,6 +109,7 @@ namespace ChameleonProxy
                 Verbose = true,
             };
             CardModule cardMole = new CardModule(mole) { Verbose = true };
+            Console.WriteLine("** Chameleon Connected  via {0} **", molePort);
 
             SerialModuleConfig chameleon2config = new SerialModuleConfig()
             {
@@ -76,6 +123,7 @@ namespace ChameleonProxy
             {
                 Verbose = true,
             };
+            Console.WriteLine("** Chameleon Connected  via {0} **", proxyPort);
 
             bool anticolisionPassed = false;
             string Atqa = "";
@@ -96,23 +144,33 @@ namespace ChameleonProxy
                 }
                 catch (NoDataException)
                 {
-                    anticolisionPassed = false;
+                    
                 }
                 anticolisionPassed = true;
             }
+            Console.WriteLine("*** anticollision on mole passed ***");
             anticolisionPassed = false;
             while (!anticolisionPassed)
             {
                 //anticolise proxy to reader
-                //hope this will work
-                //assuming reqA has been sent
-                proxy.Send(Atqa);
-                Sleep(proxyWaitTime);
-                proxy.Send(uid);
-                Sleep(proxyWaitTime);
-                answer = proxy.SendWithAnswer(sak);
-                Sleep(proxyWaitTime);
+                try
+                {
+                    //hope this will work
+                    //assuming reqA has been sent
+                    proxy.Send(Atqa);
+                    Sleep(proxyWaitTime);
+                    proxy.Send(uid);
+                    Sleep(proxyWaitTime);
+                    answer = proxy.SendWithAnswer(sak);
+                    Sleep(proxyWaitTime);
+                    anticolisionPassed = true;
+                }
+                catch(NoDataException)
+                {
+anticolisionPassed = false;
+                }
             }
+            Console.WriteLine("*** anticollision on Proxy passed ***");
             while (true)
             {
                 //actual proxying
@@ -140,8 +198,8 @@ namespace ChameleonProxy
         public bool SimpleAttack = true;
         public bool Mole = false;
         public bool Proxy = false;
-        public string MoleIp = "";
-        public string MolePort = "";
+        public string MoleIp = "127.0.0.1";
+        public string MolePort = "54321";
         public string MoleComName = "COM3";
         public string ProxyComName = "COM4";
         public int MoleWaitTime = 2;
@@ -163,6 +221,11 @@ namespace ChameleonProxy
                 {
                     ProxyComName = args[Array.IndexOf(args, "--pcom") + 1];
                 }
+
+                if (args.Contains("-p") || args.Contains("-m"))
+                {
+                    PrintHelp();
+                }
             }
             if (args.Contains("-m"))
             {
@@ -174,9 +237,17 @@ namespace ChameleonProxy
                 {
                     MolePort = args[Array.IndexOf(args, "--mport") + 1];
                 }
+                if (args.Contains("--mip"))
+                {
+                    MoleIp = args[Array.IndexOf(args, "--mip") + 1];
+                }
                 if (args.Contains("--mcom"))
                 {
                     MoleComName = args[Array.IndexOf(args, "--mcom") + 1];
+                }
+                if (args.Contains("-p") || args.Contains("-s"))
+                {
+                    PrintHelp();
                 }
             }
 
@@ -195,9 +266,13 @@ namespace ChameleonProxy
                 {
                     MoleIp = args[Array.IndexOf(args, "--mip") + 1];
                 }
-                if (args.Contains("--pport"))
+                if (args.Contains("--pcom"))
                 {
-                    ProxyComName = args[Array.IndexOf(args, "--pport") + 1];
+                    ProxyComName = args[Array.IndexOf(args, "--pcom") + 1];
+                }
+                if (args.Contains("-m") || args.Contains("-s"))
+                {
+                    PrintHelp();
                 }
             }
 
@@ -212,9 +287,14 @@ namespace ChameleonProxy
 
             if (args.Contains("-h") || args.Contains("--help"))
             {
-                Console.WriteLine("this is help ...");
-                Environment.Exit(0);
+                PrintHelp();
             }
+        }
+
+        public static void PrintHelp()
+        {
+            Console.WriteLine("this is help ...");
+            Environment.Exit(0);
         }
     }
 }
