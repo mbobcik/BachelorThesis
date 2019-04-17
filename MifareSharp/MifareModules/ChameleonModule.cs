@@ -8,13 +8,21 @@ namespace MifareModules
 {
     public class ChameleonModule
     {
+        //TODO add logging!!
         private SerialModule serial;
         public Boolean Verbose { get; set; } = true;
+        public string Role = "";
         private const string sendCommand = "SEND";
 
         public ChameleonModule(SerialModule serial)
         {
             this.serial = serial;
+        }
+
+        public ChameleonModule(SerialModule serial, string role)
+        {
+            this.serial = serial;
+            this.Role = role;
         }
 
         public void GetCommands()
@@ -45,6 +53,12 @@ namespace MifareModules
         {
             string length = CalculateMessageLength(message);
             serial.WriteLine(String.Format("{0} {1} {2}", sendCommand, length, message));
+        }
+
+        public string SendWithAnswer(string message)
+        {
+            this.Send(message);
+            return this.ReadToEnd()[1];
         }
 
         public void TurnElectromagnetic(Field value)

@@ -26,6 +26,10 @@ namespace MifareModules
             cm.Send(Get(ISOCode.ReqA));
             var result = cm.ReadToEnd()[1];
             Log($"<{result}");
+            if (result == "NO DATA")
+            {
+                throw new NoDataException();
+            }
             return result;
         }
 
@@ -56,6 +60,10 @@ namespace MifareModules
             cm.Send(message);
             var result = cm.ReadToEnd()[1];
             Log("<"+ (result.Equals("08B6DD") ? "Ack" : "Nack" )+ $" ({result})");
+            if (result == "NO DATA")
+            {
+                throw new NoDataException();
+            }
             return result;// ACK code
         }
 
