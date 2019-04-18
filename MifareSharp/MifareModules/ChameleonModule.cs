@@ -51,14 +51,20 @@ namespace MifareModules
 
         public void Send(string message)
         {
+            
             string length = CalculateMessageLength(message);
-            serial.WriteLine(String.Format("{0} {1} {2}", sendCommand, length, message));
+            string toSend = String.Format("{0} {1} {2}", sendCommand, length, message);
+            serial.WriteLine(toSend);
+            Log(toSend);
         }
 
         public string SendWithAnswer(string message)
         {
+
             this.Send(message);
-            return this.ReadToEnd()[1];
+            string answer = this.ReadToEnd()[1];
+            Log("< Received " + answer);
+            return answer;
         }
 
         public void TurnElectromagnetic(Field value)
@@ -73,6 +79,15 @@ namespace MifareModules
                 return 7.ToString("X4");
             return lengthInBits.ToString("X4");
         }
+
+        private void Log(string message)
+        {
+            if (Verbose)
+            {
+                Console.WriteLine(Role + " - " + message);
+            }
+        }
+
     }
 
     public enum Field

