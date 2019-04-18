@@ -8,3 +8,9 @@ MifareSharp/MifareModules/obj/
 \.vs/
 
 MifareSharp/CryptoAnalysis/obj/
+
+MifareSharp/CryptoAnalysis/bin/
+
+MifareSharp/MifareModules/bin/Debug/
+
+MifareSharp/MifareModules/bin/
