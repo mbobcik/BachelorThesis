@@ -328,8 +328,6 @@ Tato kapitola se věnuje návrhu a implementaci tří vybraných zranitelností 
 \section{Implementace modulů}
 První a poslední demonstrace vyžadují programovou implementaci. Nejdříve byly implementovány takzvané moduly,tedy třídy abstrahující komunikaci se zařízením Chameleon Mini, nebo poskytující pomocné funkce. Všechny moduly jsou zapouzdřeny v knihovně tříd \verb|MifareModules|. Každý z modulů má vlastnost \verb|Verbose| typu \verb|Boolean|. Jejím nastavením na \verb|true| začnou moduly zapisovat aktuální stav na standardní výstup. Celá programová část této práce byla realizována v jazyce C\# .Net Framework verze 4.7.2.
 
-
-
 \subsection*{SerialModule}
 Třída \verb|SerialModule| pozměňuje funkcionalitu \verb|System.IO.Ports.SerialPort| (dále jen \verb|SerialPort|) tak, aby vyhovoval požadavkům modulů vyšší vrstvy. V parametru konstruktoru je předávána třída \verb|SerialModuleConfig|, která obsahuje veškeré možné nastavení komunikace přes sériový port. Třída je předpřipravená tak, že beze změn zajišťuje komunikaci se zařízením Chameleon Mini na portu ''COM3''. Konstruktor vytvoří komponentu \verb|SerialPort| se zadanou konfigurací a rovnou jej otevře pro komunikaci.
 
@@ -344,7 +342,40 @@ public List<string> WriteAndGetResult(string message, int numberOfLines = 1)
 public void WriteAndTrashResult(string message, int numberOfLines = 1)
 \end{lstlisting}
 
+Práce metod \verb|Open()|, \verb|Close()|, \verb|WriteLine(string)| a \verb|ReadLine()| je vcelku jednoznačná. První dvě se starají o otevírání, respektive zavírání portu pro komunikaci. Pomocí třetí metody lze zapsat řetězec na otevřený port a poslední metoda řetězec z portu přečte. Tyto dvě metody mohou zapisovat řetězce komunikace na standardní výstup. Metoda \verb|ReadLines(int)| přečte z portu několik řádků, v závislosti na jejím parametru a vrátí je jako seznam řeťezců. Poslední dvě metody zjednodušují zápis a následné zpracování odpovědi. Metoda \verb|WriteAndGetResult(string, int)| odešle zprávu a vrátí řádky odpovědi opět jako seznam řeťezců. Není možné předpovědět, kolik řádků bude odpověď mít, proto je nutné zadat počet řádků k přečtení. Při zadání většího čísla než je počet řádků metoda vrátí všechny řádky, které přečetla a po zachycení vyjímky \verb|TimeoutException| skončí. Zadáním menšího čísla metoda přečte a vrátí daný počet řádků. Problém nastane při dalším čtení, kdy nepřečtené řádky zůstanou ve vyrovnávací paměti portu a budou přečteny místo nových. Poslední metoda \verb|WriteAndTrashResult(string, int)| funguje stejně jako předchozí metoda s tím rozdílem, že přečte odpověď, ale už ji nevrátí.
+
 \subsection*{ChameleonModule}
+Tento modul abstrahuje komunikaci se zařízením Chameleon Mini tak, aby se uživatel nemusel starat o obsluhu sériového portu. Konstruktory jsou dva. Prvním je v parametru předána pouze instance třídy \verb|SerialModule|. Tímto způsobem je předána informace na kterém portu zařízení komunikuje. Druhým konstruktorem lze navíc specifikovat roli zařízení (při relay útoku) kvůli zápisu informací do konzole.
+
+\begin{lstlisting}[caption=Metody třídy \emph{ChameleonModule}, label={chameleonModuleMethods}]
+public ChameleonModule(SerialModule serial)
+public ChameleonModule(SerialModule serial, string role)
+public void GetCommands()
+public void Send(string message)
+public List<string> ReadToEnd()
+public string SendWithAnswer(string message)
+public string GetUid()
+public void TurnElectromagnetic(Field value)
+private string CalculateMessageLength(string message)
+\end{lstlisting}
+
+Metoda \verb|GetCommand()| je spíše informativního charakteru a vrátí všechny příkazy, které Chameleon podporuje. Pomocí metody \verb|Send(string)| se odešle zpráva ve formátu hexadecimálního čísla v řetězci. Metoda sama vypočítá délku zprávy a připojí ji k příkazu \verb|Send| pro Chameleon Mini. Metoda \verb|ReadToEnd()| přečte všechny řádky odpovědi po příkazu \verb|Send|. V této části už je známý počet řádků, jelikož všechny odpovědi končí buď řádkem ''PARITY OK'', ''PARITY ERR'', nebo ''NO DATA''. Funkcionalitu obou předchozích metod kombinuje \verb|SendWithAnswer(string)|. Tato metoda odešle zadanou zprávu a a vrátí relevantní část odpovědi. Pokud se v blízkosti zařízení nachází kompatibilní karta, metodou \verb|GetUid()| získáme její UID. Elektromagnetické pole zařízení ovládá poslední veřejná metoda \verb|TurnElectromagnetic(Field)|. Ta má jako parametr výčtový typ \verb|Field| hodnotami ''On'' a ''Off''. Poslední významná metoda je privátní \verb|CalculateMessageLength(string)|, jenž vypočítá již zmíňenou délku zprávy k odeslání. 
+
+\subsection*{CardModule}
+Poslední z komunikačních modulů je zaměřen na komunikaci  přímo s kartou a obsahuje metody usnadňující práci s protokolem ISO 14443. Informaci o tom, u kterého zařízení se karta nachází je jedinému konstruktoru předána parametrem typu \verb|ChameleonModule|. Tato třída dále závysí na \verb|CRCModule|, ten se ale parametrem nepředává. Jeho instance je vytvořena v konstruktoru. Třída však pokrývá pouze antikolizní fázi a začátek autentizační fáze. Pro další by byly potřeba knihovny s šifrou CRYPTO1. 
+\begin{lstlisting}[caption=Metody třídy \emph{CardModule}, label={cardModuleMethods}]
+public CardModule(ChameleonModule cm)
+public string ReqA()
+public string Select()
+public string SelectUid(string uid)
+public string AuthenticateForBlock(string blockNumber)
+private string Get(ISOCode code)
+\end{lstlisting}
+
+Antikolizní fáze protokolu ISO~14443 je inicializována metodou \verb|ReqA()|. Metoda \verb|Select()| odešle příkaz \emph{Select} podle protokolu, a pomocí metody \verb|SelectUid(string)| je vybrána karta na základě jejího UID. Po této sekvenci je antikolizní fáze. Metoda \verb|AuthenticateForBlock(string)| začne s autentizační fází vůči pamětovému bloku na kartě. Vybraný blok je zadán ve formě řetězce hexadecimálního čísla. Všechny metody ke zprávám připojují kódy protokolu ISO~14443 nebo případně kontrolní součty CRC. Každá z těchto metod vrací odpovědi karty. Nedílnou součástí tohoto modulu je výčtový typ \verb|ISOCode| s hodnotami kódů standardu. Čísla kódů z výčtového typu získává privátní metoda \verb|Get(ISOCode)|.
+
+\subsection*{CRCModule}
+Třída tohoto modulu zapouzdřuje a zjednodušuje použití externí knihovny \verb|Nito.KitchenSink.CRC|, která slouží pro výpočet kontrolních součtů CRC. Konstruktor vytvoří instanci třídy \verb|CRC16| se správným nastavením pro použití v předchozím mudulu. Jediná metoda třídy \verb|Hash(string)| vypočítá a vrátí kontrolní součet zadané hodnoty. 
 
 \section{Časová kryptoanalýza}
 Jako první demonstraci jsem vybral zranitelnost nedostatečné náhodnosti generování výzev karty ve fázi autentizace, popsané v \ref{predvidatelne_nonce}. Karty MIFARE Classic generují 16bitové výzvy 32bitovým posuvným registrem s lineární zpětnou vazbou, jehož stav se mění každou periodu hodinového signálu karty a při startu karty se jeho stav resetuje vždy do stejného stavu. Perioda hodinového signálu je 9,44$\mu$s, zatímco perioda generátoru pseudonáhodných čísel je 65535. Generátor tedy vyčerpá všechny stavy během přibližně 0,618s. \par

@@ -36,7 +36,7 @@ namespace MifareModules
         {
             var result = new List<string>();
             var line = "";
-            while (!line.Contains("PARITY OK") && !line.Contains("NO DATA"))
+            while (!line.Contains("PARITY OK") && !line.Contains("PARITY ERR") && !line.Contains("NO DATA"))
             {
                 line = serial.ReadLine();
                 result.Add(line);
