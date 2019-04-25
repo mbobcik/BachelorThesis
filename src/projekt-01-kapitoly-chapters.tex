@@ -326,6 +326,7 @@ Stav zařízení v terénu lze zjišťovat dvěma LED diodami, které se nastavu
 Tato kapitola se věnuje návrhu a implementaci tří vybraných zranitelností karet MIFARE Classic. Nejprve se zaměřím na analýzu předvídatelných výzev karty MIFARE Classic popsaných v \ref{predvidatelne_nonce}. Následují možnosti a úskalí emulace karet pomocí zařízení Chameleon Mini. Nakonec nastíním princip a provedení relay útoku.\par 
 
 \section{Implementace modulů}
+\label{implementaceModulu}
 První a poslední demonstrace vyžadují programovou implementaci. Nejdříve byly implementovány takzvané moduly,tedy třídy abstrahující komunikaci se zařízením Chameleon Mini, nebo poskytující pomocné funkce. Všechny moduly jsou zapouzdřeny v knihovně tříd \verb|MifareModules|. Každý z modulů má vlastnost \verb|Verbose| typu \verb|Boolean|. Jejím nastavením na \verb|true| začnou moduly zapisovat aktuální stav na standardní výstup. Celá programová část této práce byla realizována v jazyce C\# .Net Framework verze 4.7.2.
 
 \subsection*{SerialModule}
@@ -379,8 +380,13 @@ Třída tohoto modulu zapouzdřuje a zjednodušuje použití externí knihovny \
 
 \section{Časová krypto-analýza}
 Jako první demonstraci jsem vybral zranitelnost nedostatečné náhodnosti generování výzev karty ve fázi autentizace, popsané v \ref{predvidatelne_nonce}. Karty MIFARE Classic generují 16bitové výzvy 32bitovým posuvným registrem s lineární zpětnou vazbou, jehož stav se mění každou periodu hodinového signálu karty a při startu karty se jeho stav resetuje vždy do stejného stavu. Perioda hodinového signálu je 9,44$\mu$s, zatímco perioda generátoru pseudonáhodných čísel je 65535. Generátor tedy vyčerpá všechny stavy během přibližně 0,618s. \par
-S těmito znalostmi můžeme navrhnout dva způsoby, jak si kartou nechat vygenerovat vždy stejnou výzvu. První možností je mezi každým požadavkem o autentizaci čekat stanovený čas. Protože poskytnuté zařízení Chameleon Mini dokáže ovládat své elektromagnetické pole, vybral jsem pro implementaci analýzy druhou možnost. Čekat mezi startem karty a autentizací konstantní čas. 
+S těmito znalostmi můžeme navrhnout dva způsoby, jak si kartou nechat vygenerovat vždy stejnou výzvu. První možností je mezi každým požadavkem o autentizaci čekat stanovený čas. Protože poskytnuté zařízení Chameleon Mini dokáže ovládat své elektromagnetické pole, vybral jsem pro implementaci analýzy druhou možnost. Čekat mezi startem karty a autentizací konstantní čas.\par
+Tato demonstrace vyžaduje implementaci skriptu či programu, který automatizuje obsluhu elektromagnetického pole a průběh antikolizní a autenzizační fáze. Program \emph{CryptoAnalysis.exe} využívá knihovny \verb|MifareModules| (viz \ref{implementaceModulu}), jejíž moduly jsou inicializovány hned po startu. Dále je inicializován prázdný seznam výzev typu \verb|List<string>| a třída \verb|Stopwatch| pro stopování času jednotlivých pokusů. Inicializační část následuje jádro programu - cyklus opakující pokusy o autentizaci. Na začátku cyklu jsou spuštěny stopky a elektromagnetické pole zařízení. Po krátkém čekání je zahájena antikolizní fáze. Pokud při ní nastane chyba (například karta nestihne odpovědět), je algoritmus vrácen zpět na začátek cyklu. Na antikolizní fázi navazuje pokus o autentizaci. Ten je realizován odesláním příkazu \emph{0x60 00}, tedy autentizace vůči prvnímu sektoru. Voláním metody \verb|CardModule.AuthenticateForBlock("00")| získáme přijatou výzvu karty. V tuto chvíli je vypnuto elektromagnetické pole a výzva je uložena do seznamu výzev. Před návratem na začátek cyklu se ještě vytiskne informace o přijaté výzvě a čase. Na konci programu jsou v seznamu přijatých výzev vyhledány duplikáty. 
 
+\section{Emulace karet}
+
+
+\section{Relay útok}
 
     \chapter{Vyhodnocení}
 

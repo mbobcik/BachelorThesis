@@ -41,10 +41,10 @@ namespace CryptoAnalysis
             {
                 sw.Start();
                 chameleon1.TurnElectromagnetic(Field.On);
-                Thread.Sleep(waitTime + 2);
+                Sleep(waitTime + 2);
 
                 card.ReqA();
-                Thread.Sleep(waitTime);
+                Sleep(waitTime);
                 try
                 {
                     string uid = card.Select();
@@ -52,20 +52,21 @@ namespace CryptoAnalysis
                 catch (NoDataException)
                 {
                     Console.WriteLine("NO DATA");
+                    chameleon1.TurnElectromagnetic(Field.Off);
                     continue;
                 }
-                Thread.Sleep(waitTime);
+                Sleep(waitTime);
                 card.SelectUid(card.UID);
                 string nonce = card.AuthenticateForBlock("00");
 
 
                 chameleon1.TurnElectromagnetic(Field.Off);
                 sw.Stop();
-                if (!string.Equals(nonce, "NO DATA")) ;
-                nonces.Add(nonce);
+                if (!string.Equals(nonce, "NO DATA")) 
+                    nonces.Add(nonce);
                 Console.WriteLine("nonce: {0} Elapsed: {1}ms", nonce, sw.ElapsedMilliseconds);
                 sw.Reset();
-                Thread.Sleep(waitTime + 2);
+                Sleep(waitTime + 2);
             }
 
             var duplicateNonces = nonces.GroupBy(x => x).Where(x => x.Count() > 1).Select(x => x.Key);
@@ -84,6 +85,14 @@ namespace CryptoAnalysis
 
             if(Debugger.IsAttached)
                 Console.ReadLine();
+        }
+
+        private static void Sleep(int ms)
+        {
+            if (ms > 0)
+            {
+                Thread.Sleep(ms);
+            }
         }
 
         private static Dictionary<string, string> argParse(string[] args)
