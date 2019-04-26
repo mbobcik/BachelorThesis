@@ -381,10 +381,35 @@ Třída tohoto modulu zapouzdřuje a zjednodušuje použití externí knihovny \
 \section{Časová krypto-analýza}
 Jako první demonstraci jsem vybral zranitelnost nedostatečné náhodnosti generování výzev karty ve fázi autentizace, popsané v \ref{predvidatelne_nonce}. Karty MIFARE Classic generují 16bitové výzvy 32bitovým posuvným registrem s lineární zpětnou vazbou, jehož stav se mění každou periodu hodinového signálu karty a při startu karty se jeho stav resetuje vždy do stejného stavu. Perioda hodinového signálu je 9,44$\mu$s, zatímco perioda generátoru pseudonáhodných čísel je 65535. Generátor tedy vyčerpá všechny stavy během přibližně 0,618s. \par
 S těmito znalostmi můžeme navrhnout dva způsoby, jak si kartou nechat vygenerovat vždy stejnou výzvu. První možností je mezi každým požadavkem o autentizaci čekat stanovený čas. Protože poskytnuté zařízení Chameleon Mini dokáže ovládat své elektromagnetické pole, vybral jsem pro implementaci analýzy druhou možnost. Čekat mezi startem karty a autentizací konstantní čas.\par
-Tato demonstrace vyžaduje implementaci skriptu či programu, který automatizuje obsluhu elektromagnetického pole a průběh antikolizní a autenzizační fáze. Program \emph{CryptoAnalysis.exe} využívá knihovny \verb|MifareModules| (viz \ref{implementaceModulu}), jejíž moduly jsou inicializovány hned po startu. Dále je inicializován prázdný seznam výzev typu \verb|List<string>| a třída \verb|Stopwatch| pro stopování času jednotlivých pokusů. Inicializační část následuje jádro programu - cyklus opakující pokusy o autentizaci. Na začátku cyklu jsou spuštěny stopky a elektromagnetické pole zařízení. Po krátkém čekání je zahájena antikolizní fáze. Pokud při ní nastane chyba (například karta nestihne odpovědět), je algoritmus vrácen zpět na začátek cyklu. Na antikolizní fázi navazuje pokus o autentizaci. Ten je realizován odesláním příkazu \emph{0x60 00}, tedy autentizace vůči prvnímu sektoru. Voláním metody \verb|CardModule.AuthenticateForBlock("00")| získáme přijatou výzvu karty. V tuto chvíli je vypnuto elektromagnetické pole a výzva je uložena do seznamu výzev. Před návratem na začátek cyklu se ještě vytiskne informace o přijaté výzvě a čase. Na konci programu jsou v seznamu přijatých výzev vyhledány duplikáty a vypsán výsledek. 
+Tato demonstrace vyžaduje implementaci skriptu či programu, který automatizuje obsluhu elektromagnetického pole a průběh antikolizní a autenzizační fáze. Program \emph{CryptoAnalysis.exe} využívá knihovny \verb|MifareModules| (viz \ref{implementaceModulu}), jejíž moduly jsou inicializovány hned po startu. Dále je inicializován prázdný seznam výzev typu \verb|List<string>| a třída \verb|Stopwatch| pro stopování času jednotlivých pokusů. Inicializační část následuje jádro programu - cyklus opakující pokusy o autentizaci. Na začátku cyklu jsou spuštěny stopky a elektromagnetické pole zařízení. Po krátkém čekání je zahájena antikolizní fáze. Pokud při ní nastane chyba (například karta nestihne odpovědět), je algoritmus vrácen zpět na začátek cyklu. Na antikolizní fázi navazuje pokus o autentizaci. Ten je realizován odesláním příkazu \emph{0x60 00}, tedy autentizace vůči prvnímu sektoru. Voláním metody \verb|CardModule.AuthenticateForBlock("00")| získáme přijatou výzvu karty. V tuto chvíli je vypnuto elektromagnetické pole a výzva je uložena do seznamu výzev. Před návratem na začátek cyklu se ještě vytiskne informace o přijaté výzvě a čase cyklu. Na konci programu jsou v seznamu přijatých výzev vyhledány duplikáty a vypsán výsledek. \par
+Chování programu lze měnit vstupními parametry. Nejdůležitější je parametr ''-p'', kterým lze nastavit jméno portu na kterém poslouchá Chameleon Mini. Při nezadání parametru je nastaven port ''COM3''. Počet pokusů o autentizaci nastavuje parametr ''-r''(standardně 100 pokusů). Mezi každým odesláním zprávy při antikolizní a autentizační fázi lze nastavit čekání pomocí ''-w'' v milisekundách. Při odesílání zpráv těsně při sobě karta nemusí odpovědět včas, standardní čekací doba je 2ms. 
 
 \section{Emulace karet}
-Předmětem další demonstrace je schopnost zařízení Chameleon Mini emulovat karty. Emulací rozumíme schopnost zařízení imitovat kartu při komunikaci s cizím čtecím zařízením. Aby mohla být emulace dostatečně důvěryhodná, musí zařízení pracovat stejně jako původní karta a mít k tomu dostatečné množství dat karty. Chameleon v současné době dokáže emulovat až 5 různých druhů karet. Množství potřebných dat závisí na složitosti systému. Některé systémy mohou pracovat přímo s datovými či hodnotovými bloky karty, jiným stačí pouze autentizace karty. Samotným zařízením Chameleon Mini lze získat pouze UID karty. Pro získání celé paměti karty jsou potřeba sofistikovanější zařízení, například ProxMark 3000 ve spojení s kryptoanalytickými skripty.   
+Předmětem další demonstrace je schopnost zařízení Chameleon Mini emulovat karty. Emulací rozumíme schopnost zařízení imitovat kartu při komunikaci s cizím čtecím zařízením. Aby mohla být emulace dostatečně důvěryhodná, musí zařízení pracovat stejně jako původní karta a mít k tomu dostatečné množství dat karty. Chameleon v současné době dokáže emulovat až 5 různých druhů karet. Množství potřebných dat závisí na složitosti systému. Některé systémy mohou pracovat přímo s datovými či hodnotovými bloky karty, jiným stačí pouze autentizace karty. Samotným zařízením Chameleon Mini lze získat pouze UID karty. Pro získání celé paměti karty jsou potřeba sofistikovanější zařízení, například ProxMark 3 ve spojení s kryptoanalytickými skripty MIFARE Classic Universal toolKit (MFCUK) a MIFARE Classic Offline Cracker (MFOC). %Citace !!!
+Můžeme ale emulovat jen prázdnou kartu s nastaveným UID. Toto řešení nebude fungovat na všechny systémy, pouze na ty, kterým k ověření stačí úspěšná antikolizní fáze s platným UID.\par
+Pro emulaci karty je nutné nastavit Chameleon Mini do správné konfigurace. Nejprve zjistíme typ emulované karty příkazem \verb|Identify|.
+
+\begin{lstlisting}[caption=Záznam postupu identifikace karty, label={ChameleonIdentify}]
+Config=ISO14443A_READER
+100:OK
+Identify
+101:OK WITH TEXT
+MIFARE Classic 1k
+ATQA:   0400
+UID:    9E314C87
+SAK:    08
+\end{lstlisting}
+
+Správně nastavíme konfiguraci a UID zařízení a je možné přistoupit k demonstraci.
+
+\begin{lstlisting}[caption=Záznam nastavení emulace karty, label={ChameleonSetting}]
+Config=MF_CLASSIC_1K
+100:OK
+Uid=9E314C87
+100:OK
+\end{lstlisting}
+
+V lednu 2018 byla do firmware Chameleon Mini implementována funkce zjednodušující emulaci karet. Příkaz \verb|Clone| přepne zařízení do konfigurace čtečky, identifikuje přiloženou kartu a správně nakonfiguruje zařízení.
 
 \section{Relay útok}
 
