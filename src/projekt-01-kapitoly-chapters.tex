@@ -327,7 +327,7 @@ Tato kapitola se věnuje návrhu a implementaci tří vybraných zranitelností 
 
 \section{Implementace modulů}
 \label{implementaceModulu}
-První a poslední demonstrace vyžadují programovou implementaci. Nejdříve byly implementovány takzvané moduly,tedy třídy abstrahující komunikaci se zařízením Chameleon Mini, nebo poskytující pomocné funkce. Všechny moduly jsou zapouzdřeny v knihovně tříd \verb|MifareModules|. Každý z modulů má vlastnost \verb|Verbose| typu \verb|Boolean|. Jejím nastavením na \verb|true| začnou moduly zapisovat aktuální stav na standardní výstup. Celá programová část této práce byla realizována v jazyce C\# .Net Framework verze 4.7.2.
+První a poslední demonstrace vyžadují programovou implementaci. Nejdříve byly implementovány takzvané moduly,tedy třídy abstrahující komunikaci se zařízením Chameleon Mini, nebo poskytující pomocné funkce. Všechny moduly jsou zapouzdřeny v knihovně tříd \verb|MifareModules|. Každý z modulů má vlastnost \verb|Verbose| typu \verb|Boolean|. Jejím nastavením na \verb|true| začnou moduly zapisovat aktuální stav na standardní výstup k ulehčení ladění. Celá programová část této práce byla realizována v jazyce C\# .Net Framework verze 4.6.
 
 \subsection*{SerialModule}
 Třída \verb|SerialModule| pozměňuje funkcionalitu \verb|System.IO.Ports.SerialPort| (dále jen \verb|SerialPort|) tak, aby vyhovoval požadavkům modulů vyšší vrstvy. V parametru konstruktoru je předávána třída \verb|SerialModuleConfig|, která obsahuje veškeré možné nastavení komunikace přes sériový port. Třída je předpřipravená tak, že beze změn zajišťuje komunikaci se zařízením Chameleon Mini na portu ''COM3''. Konstruktor vytvoří komponentu \verb|SerialPort| se zadanou konfigurací a rovnou jej otevře pro komunikaci.
@@ -409,9 +409,18 @@ Uid=9E314C87
 100:OK
 \end{lstlisting}
 
-V lednu 2018 byla do firmware Chameleon Mini implementována funkce zjednodušující emulaci karet. Příkaz \verb|Clone| přepne zařízení do konfigurace čtečky, identifikuje přiloženou kartu a správně nakonfiguruje zařízení.
+V lednu 2018 byla do firmware Chameleon Mini implementována funkce zjednodušující emulaci karet. Příkaz \verb|Clone| přepne zařízení do konfigurace čtečky, identifikuje přiloženou kartu a správně nakonfiguruje zařízení. Tato funkce lze také navázat na tlačítko(\verb|Rbutton=clone|) a klonovat karty přímo v terénu, bez použití nápadného počítače.
 
 \section{Relay útok}
+Poslední demonstrací je takzvaný relay útok. Většina typů autentizací je založena na ujištění, že oba účastníci znají sdílený tajný klíč. Po autentizaci je veškerá komunikace šifrována, a pokud by útočník odposlechl takovou komunikaci, bez znalosti klíče jsou přenášená data stále zabezpečeny. Bezkontaktní karty pracují na dálku (do 10cm) a jsou aktivovány vstupem do blízkosti čtecího zařízení. Útočník tak může, bez vědomí vlastníka, navázat spojení s kartou a přeposílat komunikaci vzdálenému čtecímu zařízení. To usoudí, že karta, a tedy i její uživatel, je v blízkosti a vpustí útočníka. Ve skutečnosti může být karta vzdálená i několik kilometrů. Data mezi kartou a čtecím zařízením lze posílat jakýmkoliv, dostatečně rychlým, přenosovým médiem ({Wi-Fi}, 4G mobilní síť apod.). Přenášené zprávy sice nebudou pro útočníka čitelné, dokud je dokáže přeposílat, tak mu to nevadí. \par
+
+Pro uskutečnění relay útoku jsou nutné minimálně dvě zařízení propojené komunikační vrstvou. První zařízení se tváří jako legitimní čtecí zařízení a komunikuje s kartou oběti. Toto zařízení je označováno jako Mole. Druhé zařízení komunikuje s legitimním čtecím zařízením a tváří se jako karta oběti. V literatuře bývá označováno jako Proxy. 
+\begin{figure*}[ht]\centering
+  \centering
+  \includegraphics[width=\linewidth]{obrazky-figures/relayAttack.png}\\[1pt]  
+  \caption{Schéma relay útoku}    
+  \label{obrazekRelayAttack}
+\end{figure*}
 
     \chapter{Vyhodnocení}
 
