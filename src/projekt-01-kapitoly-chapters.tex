@@ -423,17 +423,20 @@ Pro uskutečnění relay útoku jsou nutné minimálně dvě zařízení propoje
   \label{obrazekRelayAttack}
 \end{figure*}
 
-Implementace útoku je rozdělena na dvě hlavní části. První část je zjednodušený celý útok tak, že Mole i Proxy jsou připojeny k jednomu programu, a data se vyměňují takřka okamžitě v jednom procesu. Druhá čast už zahrnuje komunikační vrstvu, a je tak možné komunikovat s jiným počítačem. Obě části jsou obsaženy v programu \emph{MifareProxy.exe} a je mezi nimi možné přepínat pomocí argumentů. Implementace opět využívá knihovny \verb|MifareModules|.
+Implementace útoku je rozdělena na dvě hlavní části. První část je zjednodušený celý útok tak, že  zařízení Mole i Proxy jsou připojeny k jednomu programu, a data se vyměňují takřka okamžitě v jednom procesu. Druhá část už zahrnuje komunikační vrstvu, a je tak možné komunikovat s jiným počítačem. Obě části jsou obsaženy v programu \emph{MifareProxy.exe} a je mezi nimi možné přepínat pomocí argumentů. Implementace opět využívá knihovny \verb|MifareModules|.
 \par
 \subsection*{Jednoduchý relay útok}
-Jednoduchý relay útok je standardní chování programu a je spíše demonstračního charakteru. Nejprve jsou inicializovány pomocné moduly pro komunikaci s oběma zařízeními Chameleon Mini. Program předpokládá, že jsou na portech ''COM3'' pro Proxy a ''COM4'' pro Mole. Případně je lze změnit argumenty ''--pcom'', respektive ''--mcom''. Následuje relay útok. Nejprve je provedena antikolizní fáze s kartou oběti. S odpověďmi je provedena antikolizní fáze také s cílovým čtecím zařízením. Poslední zpráva obsahující výzvu k autentizaci je odeslána kartě, a ve smyčce si Mole a Proxy vyměňují zprávy.
+Jednoduchý relay útok je standardní chování programu a je spíše demonstračního charakteru. Nejprve jsou inicializovány pomocné moduly pro komunikaci s oběma zařízeními Chameleon Mini. Program předpokládá, že jsou na portech ''COM3'' pro Proxy a ''COM4'' pro Mole. Případně je lze změnit argumenty ''--pcom'', respektive ''--mcom''. Následuje relay útok. Nejprve je provedena antikolizní fáze s kartou oběti. S odpověďmi je provedena antikolizní fáze také s cílovým čtecím zařízením. Poslední zpráva obsahující výzvu k autentizaci je odeslána kartě, a ve smyčce se pak vyměňují data mezi zařízeními Mole a Proxy
 
 \subsection*{Relay útok přes síť}
 Pro relay útok s komunikací přes síť je nutné nastavit program do módu Proxy argumentem ''-p'' a do módu Mole argumentem ''-m''. Jméno sériového portu se nastaví stejným způsobem jako u jednoduché verze. Komunikace probíhá přes TCP soket, kdy Proxy je klient a připojuje se k serveru Mole. IP~adresa a port serveru je potřeba nastavit v obou instancích programu argumenty ''--mip'' a ''--mport''. \par
 Nejprve se opět inicializují obě zařízení Chameleon Mini. Po inicializaci vytvoří Mole server a počká na připojení Proxy. Připojením je vše připraveno k útoku. Jeho logika je prakticky stejná jako u jednoduchého, s tím rozdílem, že data jsou posílána sítí a ne pouze ''promennými''. Při komunikaci po síti se může vyskytnout problém dlouhou dobou doručení, neboli s latencí. Tento problém je nejmarkantnější u antikolizní fáze, neboť při ní mají čtečky striktní časování. Také proto jsou odpovědi antikolizní fáze přenášeny najednou, po jejím konci.
 
     \chapter{Vyhodnocení}
+Testování vybraných zranitelností probíhalo na půdě Fakulty informačních technologií VUT v Brně. Vstupní dveře fakulty jsou vybaveny čtecími zařízeními HID RP10\footnotemark. Po přiložení osobní karty studenta, či učitele je možné otevřít dveře a vstoupit do vnitřních prostor školy. Karty používané studenty jsou mezinárodní studentské ISIC karty, případně VUT karty. \par
+Cílem demonstrace relay útoku a emulace karet je obelstít čtecí zařízení tak, aby otevřelo dveře bez přítomnosti legitimní karty a umožnilo vstup cizímu člověku. Cílem časové kryptoanalýzy je ověřit slabinu karet MIFARE Classic se zařízením Chameleon Mini.
 
+\footnotetext{\url{https://www.sourcesecurity.com/hid-rp10-access-control-reader-technical-details.html}}
 
 \chapter{Závěr}
 \label{zaver}
