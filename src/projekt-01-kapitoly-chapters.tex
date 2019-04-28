@@ -409,18 +409,28 @@ Uid=9E314C87
 100:OK
 \end{lstlisting}
 
-V lednu 2018 byla do firmware Chameleon Mini implementována funkce zjednodušující emulaci karet. Příkaz \verb|Clone| přepne zařízení do konfigurace čtečky, identifikuje přiloženou kartu a správně nakonfiguruje zařízení. Tato funkce lze také navázat na tlačítko(\verb|Rbutton=clone|) a klonovat karty přímo v terénu, bez použití nápadného počítače.
+V lednu 2018 byla do firmware Chameleon Mini implementována funkce zjednodušující emulaci karet. Příkaz \verb|Clone| přepne zařízení do konfigurace čtečky, identifikuje přiloženou kartu a správně nakonfiguruje zařízení. Tato funkce lze také navázat na tlačítko (\verb|Rbutton=clone|) a klonovat karty přímo v terénu, bez použití nápadného počítače.
 
 \section{Relay útok}
-Poslední demonstrací je takzvaný relay útok. Většina typů autentizací je založena na ujištění, že oba účastníci znají sdílený tajný klíč. Po autentizaci je veškerá komunikace šifrována, a pokud by útočník odposlechl takovou komunikaci, bez znalosti klíče jsou přenášená data stále zabezpečeny. Bezkontaktní karty pracují na dálku (do 10cm) a jsou aktivovány vstupem do blízkosti čtecího zařízení. Útočník tak může, bez vědomí vlastníka, navázat spojení s kartou a přeposílat komunikaci vzdálenému čtecímu zařízení. To usoudí, že karta, a tedy i její uživatel, je v blízkosti a vpustí útočníka. Ve skutečnosti může být karta vzdálená i několik kilometrů. Data mezi kartou a čtecím zařízením lze posílat jakýmkoliv, dostatečně rychlým, přenosovým médiem ({Wi-Fi}, 4G mobilní síť apod.). Přenášené zprávy sice nebudou pro útočníka čitelné, dokud je dokáže přeposílat, tak mu to nevadí. \par
+Poslední demonstrací je takzvaný relay útok. Většina typů autentizací je založena na ujištění, že oba účastníci znají sdílený tajný klíč. Po autentizaci je veškerá komunikace šifrována, a pokud by útočník odposlechl takovou komunikaci, bez znalosti klíče jsou přenášená data stále zabezpečeny. Bezkontaktní karty pracují na dálku (do 10cm) a jsou aktivovány vstupem do blízkosti čtecího zařízení. Útočník tak může, bez vědomí vlastníka, navázat spojení s kartou a přeposílat komunikaci vzdálenému čtecímu zařízení. To usoudí, že karta, a tedy i její uživatel, je v blízkosti a vpustí útočníka. Ve skutečnosti může být karta vzdálená několik kilometrů. Data mezi kartou a čtecím zařízením lze posílat jakýmkoliv, dostatečně rychlým, přenosovým médiem ({Wi-Fi}, 4G mobilní síť apod.). Přenášené zprávy sice nebudou pro útočníka čitelné, dokud je ale dokáže nezměněné přeposílat, tak mu to nevadí. Výhodou takového útoku je nezávislost na šifrovacím algoritmu systému.\par
 
-Pro uskutečnění relay útoku jsou nutné minimálně dvě zařízení propojené komunikační vrstvou. První zařízení se tváří jako legitimní čtecí zařízení a komunikuje s kartou oběti. Toto zařízení je označováno jako Mole. Druhé zařízení komunikuje s legitimním čtecím zařízením a tváří se jako karta oběti. V literatuře bývá označováno jako Proxy. 
+Pro uskutečnění relay útoku jsou nutné minimálně dvě zařízení propojené komunikační vrstvou. První zařízení se tváří jako legitimní čtecí zařízení a komunikuje s kartou oběti. Toto zařízení je označováno jako Mole. Druhé zařízení komunikuje s legitimním čtecím zařízením a tváří se jako karta oběti. V literatuře bývá označováno jako Proxy.\cite{PracticalRelayAttack} 
+
 \begin{figure*}[ht]\centering
   \centering
   \includegraphics[width=\linewidth]{obrazky-figures/relayAttack.png}\\[1pt]  
   \caption{Schéma relay útoku}    
   \label{obrazekRelayAttack}
 \end{figure*}
+
+Implementace útoku je rozdělena na dvě hlavní části. První část je zjednodušený celý útok tak, že Mole i Proxy jsou připojeny k jednomu programu, a data se vyměňují takřka okamžitě v jednom procesu. Druhá čast už zahrnuje komunikační vrstvu, a je tak možné komunikovat s jiným počítačem. Obě části jsou obsaženy v programu \emph{MifareProxy.exe} a je mezi nimi možné přepínat pomocí argumentů. Implementace opět využívá knihovny \verb|MifareModules|.
+\par
+\subsection*{Jednoduchý relay útok}
+Jednoduchý relay útok je standardní chování programu a je spíše demonstračního charakteru. Nejprve jsou inicializovány pomocné moduly pro komunikaci s oběma zařízeními Chameleon Mini. Program předpokládá, že jsou na portech ''COM3'' pro Proxy a ''COM4'' pro Mole. Případně je lze změnit argumenty ''--pcom'', respektive ''--mcom''. Následuje relay útok. Nejprve je provedena antikolizní fáze s kartou oběti. S odpověďmi je provedena antikolizní fáze také s cílovým čtecím zařízením. Poslední zpráva obsahující výzvu k autentizaci je odeslána kartě, a ve smyčce si Mole a Proxy vyměňují zprávy.
+
+\subsection*{Relay útok přes síť}
+Pro relay útok s komunikací přes síť je nutné nastavit program do módu Proxy argumentem ''-p'' a do módu Mole argumentem ''-m''. Jméno sériového portu se nastaví stejným způsobem jako u jednoduché verze. Komunikace probíhá přes TCP soket, kdy Proxy je klient a připojuje se k serveru Mole. IP~adresa a port serveru je potřeba nastavit v obou instancích programu argumenty ''--mip'' a ''--mport''. \par
+Nejprve se opět inicializují obě zařízení Chameleon Mini. Po inicializaci vytvoří Mole server a počká na připojení Proxy. Připojením je vše připraveno k útoku. Jeho logika je prakticky stejná jako u jednoduchého, s tím rozdílem, že data jsou posílána sítí a ne pouze ''promennými''. Při komunikaci po síti se může vyskytnout problém dlouhou dobou doručení, neboli s latencí. Tento problém je nejmarkantnější u antikolizní fáze, neboť při ní mají čtečky striktní časování. Také proto jsou odpovědi antikolizní fáze přenášeny najednou, po jejím konci.
 
     \chapter{Vyhodnocení}
 

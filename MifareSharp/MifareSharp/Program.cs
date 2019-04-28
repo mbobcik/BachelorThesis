@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +25,7 @@ namespace ChameleonProxy
 
             if (pArgs.SimpleAttack)
             {
-                SimpleProxyAttack(waitTime, proxyWaitTime, pArgs.MoleComName, pArgs.ProxyComName);
+                SimpleRelayAttack(waitTime, proxyWaitTime, pArgs.MoleComName, pArgs.ProxyComName);
             }
 
             else if (pArgs.Proxy)
@@ -141,7 +141,7 @@ namespace ChameleonProxy
             stream.Write(data, 0, anticollisionSize);
         }
 
-        private static void SimpleProxyAttack(int moleWaitTime, int proxyWaitTime, string molePort = "COM3", string proxyPort = "COM4")
+        private static void SimpleRelayAttack(int moleWaitTime, int proxyWaitTime, string molePort = "COM3", string proxyPort = "COM4")
         {
             // initialize chameleons
             SerialModuleConfig chameleon1Config = new SerialModuleConfig()
@@ -186,7 +186,7 @@ namespace ChameleonProxy
             answer = AnticollisionToReader(proxyWaitTime, proxy, Atqa, uid, sak);
             while (true)
             {
-                //actual proxying
+                //actual relaying
                 answer = mole.SendWithAnswer(answer);
                 answer = proxy.SendWithAnswer(answer);
                 Sleep(proxyWaitTime);
@@ -204,11 +204,10 @@ namespace ChameleonProxy
                 //anticollise proxy to reader
                 try
                 {
-                    //hope this will work
                     //assuming reqA has been sent
-                    proxy.Send(Atqa);
+                    proxy.SendWithAnswer(Atqa);
                     Sleep(proxyWaitTime);
-                    proxy.Send(uid);
+                    proxy.SendWithAnswer(uid);
                     Sleep(proxyWaitTime);
                     answer = proxy.SendWithAnswer(sak);
                     Sleep(proxyWaitTime);
@@ -270,8 +269,8 @@ namespace ChameleonProxy
         public bool Proxy = false;
         public string MoleIp = "127.0.0.1";
         public string MolePort = "54321";
-        public string MoleComName = "COM3";
-        public string ProxyComName = "COM4";
+        public string MoleComName = "COM4";
+        public string ProxyComName = "COM3";
         public int MoleWaitTime = 2;
         public int ProxyWaitTime = 0;
 

@@ -7,7 +7,7 @@
     <ProjectGuid>{4790BA29-316E-4E61-9061-4F09BC8A8ADC}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>MifareSharp</RootNamespace>
-    <AssemblyName>MifareSharp</AssemblyName>
+    <AssemblyName>MifareProxy</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
