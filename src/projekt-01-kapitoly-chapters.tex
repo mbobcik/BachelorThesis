@@ -27,10 +27,10 @@ RFID~tag je systém skládající se minimálně z mikročipu, antény a pouzdra
 RFID tagy se dělí na aktivní, pasivní a částečně pasivní podle toho zda je jsou napájeny z externího, nebo interního zdroje\cite{The_RF_in_RFID}. Rozdíl je také v tom, kdo iniciuje komunikaci. Aktivní tag komunikaci zahajuje sám, zatímco komunikaci s pasivními tagy musí zahájit sama čtečka\cite{Hazardous_areas}. 
 
 \subsection{Pasivní tagy}
+\label{pasivniTagy}
 Pasivní tagy identifikují levné objekty. Interní zdroj, i ve formě malé baterie, je pro ně příliš velký a drahý. Stejně jako transmittery a příjímače používané v klasických radiových zařízeních. Bez konvenčního zdroje energie jsou prakticky použitelné pouze jednoduché obvody, které je možno napájet bezdrátově i na vzdálenost několika metrů od čtecího zařízení. 
 \par 
-Aby mohl integrovaný obvod tagu pracovat potřebuje zdroj stejnosměrného proudu několika desítek mikroampérů o napětí  jeden až tři volty v závislosti na typu použitých tranzistorů. Toto napětí musí tag získat z RF signálu\cite{The_RF_in_RFID}. Frekvence tohoto signálu se podle použití liší. Od použité frekvence se také odvíjí dosah čtení a rychlost přenosu dat. Používané frekvence spadají do několika pásem, a a to nízká frekvence ({Low Frequency - LF}), vysoká frekvence ({High Frequency - HF}) a ultra vysoká frekvence ({Ultra High Frequency - UHF}). Evropská a americká specifikace pásma~UHF se liší ve frekvenci(viz. tabulka \ref{tabulka_pasem}). Chytré karty používají HF~pásmo\cite{Smart_Cards_Tokens_Security}. 
-
+Aby mohl integrovaný obvod tagu pracovat potřebuje zdroj stejnosměrného proudu několika desítek mikroampérů o napětí  jeden až tři volty v závislosti na typu použitých tranzistorů. Toto napětí musí tag získat z RF signálu\cite{The_RF_in_RFID}. Frekvence tohoto signálu se podle použití liší. Od použité frekvence se také odvíjí dosah čtení a rychlost přenosu dat. Používané frekvence spadají do několika pásem, a a to nízká frekvence ({Low Frequency - LF}), vysoká frekvence ({High Frequency - HF}) a ultra vysoká frekvence ({Ultra High Frequency - UHF}). Evropská a americká specifikace pásma~UHF se liší ve frekvenci(viz. tabulka \ref{tabulka_pasem}). Chytré karty používají HF~pásmo\cite{Smart_Cards_Tokens_Security}. \par
 \begin{table}[]
 \begin{tabular}{cccc}
 \hline
@@ -44,7 +44,17 @@ UHF-Severní Amerika & 902-928 MHz & 12-20 m & 40-640 kbps        \\ \hline
 \label{tabulka_pasem}
 \end{table}
 
-\subsection{Aktivní tagy} %\par ?? 
+Energie se přenáší na principu takzvaných volně vázaných transformátorů. Cívka ve čtecím zařízení generuje vysokofrekvenční elektromagnetické pole s vlnovou délkou 22m až 2400m. Vlnová délka nosné vlny je tedy mnohem delší než vzdálenost karty. To umožňuje volné vázání. Magnetické pole cívky v okolí čtecího zařízení indukuje napětí v cívce karty. Toto napětí je použito k napájení cívky. Účinnost tohoto modelu je velmi malá.\cite{Smart_card_handbook}\par
+K přenosu dat čtecího zářízení kartě se využívá klíčování s amplitudovým, frekvenčním i fázovým posuvem. Tedy reprezentace digitálních dat pomocí příslušné modulace nosné vlny. K přenosu dat opačným směrem, od karty ke čtecímu zařízení se využívá amlitudová modulace. Karta v poli čtecího zařízení využívá jeho energie. Změnou zatížení cívky v kartě lze měnit napětí na cívce čtecího zařízení. Tyto změny lze detekovat a interpretovat jako data. Změna zátěže v kartě je generována připojováním, nebo odpojováním resistoru z obvodu karty na základě datového signálu.\cite{Smart_card_handbook}\par
+
+\begin{figure*}[ht]\centering
+  \centering
+  \includegraphics[width=\linewidth]{obrazky-figures/obrazekRFIDDataTransfer.png}\\[1pt]  
+  \caption{Princip přenosu dat karty}    
+  \label{obrazekStrukturaSpecialnichBloku}
+\end{figure*}
+
+\subsection{Aktivní tagy} 
 Aktivní tagy jsou napájeny z vlastního zdroje. Ten může být buď baterie, nebo připojení do elektrické infrastruktury. Zdroj napájí nejenom přenos dat, ale i ostatní elektronické komponenty. Těmito komponentami mohou být různé senzory nebo uživatelské rozhraní\cite{RFID_explained}. Vzhledem k technologii logických obvodů postupuje vývoj baterií velmi pomalu. Jedním z hlavních problémů návrhu těchto tagů je tedy zkrácení doby aktivity a snížení energie potřebné jak pro aktivní, tak pro klidové období tagu. Technologické skloubení těchto požadavků není jednoduché a výroba tagů se do jisté míry podobá výrobě běžných rádiových zařízení. Diskrétní komponenty a integrované obvody připájené k tištěným spojům, to celé připojené k anténě a uložené v plastovém krytu\cite{The_RF_in_RFID}. 
 Částečně pasivní tagy obsahují vnitřní zdroj pouze k napájení pomocných komponent. Data jsou přenášena pomocí backscatter modulace, jako u pasivních tagů\cite{Survey_of_RFID_Tags}.
 
@@ -415,6 +425,7 @@ Uid=9E314C87
 V lednu 2018 byla do firmware Chameleon Mini implementována funkce zjednodušující emulaci karet. Příkaz \verb|Clone| přepne zařízení do konfigurace čtečky, identifikuje přiloženou kartu a správně nakonfiguruje zařízení. Tato funkce lze také navázat na tlačítko (\verb|Rbutton=clone|) a klonovat karty přímo v terénu, bez použití nápadného počítače.
 
 \section{Relay útok}
+\label{relayImplementace}
 Poslední demonstrací je takzvaný relay útok. Většina typů autentizací je založena na ujištění, že oba účastníci znají sdílený tajný klíč. Po autentizaci je veškerá komunikace šifrována, a pokud by útočník odposlechl takovou komunikaci, bez znalosti klíče jsou přenášená data stále zabezpečeny. Bezkontaktní karty pracují na dálku (do 10cm) a jsou aktivovány vstupem do blízkosti čtecího zařízení. Útočník tak může, bez vědomí vlastníka, navázat spojení s kartou a přeposílat komunikaci vzdálenému čtecímu zařízení. To usoudí, že karta, a tedy i její uživatel, je v blízkosti a vpustí útočníka. Ve skutečnosti může být karta vzdálená několik kilometrů. Data mezi kartou a čtecím zařízením lze posílat jakýmkoliv, dostatečně rychlým, přenosovým médiem ({Wi-Fi}, 4G mobilní síť apod.). Přenášené zprávy sice nebudou pro útočníka čitelné, dokud je ale dokáže nezměněné přeposílat, tak mu to nevadí. Výhodou takového útoku je nezávislost na šifrovacím algoritmu systému.\par
 
 Pro uskutečnění relay útoku jsou nutné minimálně dvě zařízení propojené komunikační vrstvou. První zařízení se tváří jako legitimní čtecí zařízení a komunikuje s kartou oběti. Toto zařízení je označováno jako Mole. Druhé zařízení komunikuje s legitimním čtecím zařízením a tváří se jako karta oběti. V literatuře bývá označováno jako Proxy.\cite{PracticalRelayAttack} 
@@ -435,12 +446,14 @@ Jednoduchý relay útok je standardní chování programu a je spíše demonstra
 Pro relay útok s komunikací přes síť je nutné nastavit program do módu Proxy argumentem ''-p'' a do módu Mole argumentem ''-m''. Jméno sériového portu se nastaví stejným způsobem jako u jednoduché verze. Komunikace probíhá přes TCP soket, kdy Proxy je klient a připojuje se k serveru Mole. IP~adresa a port serveru je potřeba nastavit v obou instancích programu argumenty ''--mip'' a ''--mport''. \par
 Nejprve se opět inicializují obě zařízení Chameleon Mini. Po inicializaci vytvoří Mole server a počká na připojení Proxy. Připojením je vše připraveno k útoku. Jeho logika je prakticky stejná jako u jednoduchého, s tím rozdílem, že data jsou posílána sítí a ne pouze ''proměnnými''. Při komunikaci po síti se může vyskytnout problém dlouhou dobou doručení, neboli s latencí. Tento problém je nejmarkantnější u antikolizní fáze, neboť při ní mají čtečky striktní časování. Také proto jsou odpovědi antikolizní fáze přenášeny najednou, po jejím konci.
 
+
     \chapter{Vyhodnocení}
 Testování vybraných zranitelností probíhalo na půdě Fakulty informačních technologií VUT v Brně. Vstupní dveře fakulty jsou vybaveny čtecími zařízeními HID RP10\footnotemark. Po přiložení osobní karty studenta, či učitele je možné otevřít dveře a vstoupit do vnitřních prostor školy. Karty používané studenty jsou mezinárodní studentské ISIC karty, případně VUT karty. Testování implementovaných demonstrací probíhalo na operačním systému Windows 10 Pro.\par
 Cílem demonstrace relay útoku a emulace karet je obelstít čtecí zařízení tak, aby otevřelo dveře bez přítomnosti legitimní karty a umožnilo vstup cizímu člověku. Cílem časové kryptoanalýzy je ověřit slabinu karet MIFARE Classic se zařízením Chameleon Mini.
 \footnotetext{\url{https://www.sourcesecurity.com/hid-rp10-access-control-reader-technical-details.html}}
 
 \section{Časová krypto-analýza}
+\label{vyhodnoceniKryptoAnalyza}
 Jako první byl proveden pokus o analýzu opakovatelných výzev karet MIFARE Classic v autentizační fázi. Problematika opakovatelných výzev je popsána v kapitole . Implementace programu automatizujícího útok dokumentuje část \ref{casovaKryptoanalyza}. Tato analýza se týká pouze karet, protože generátor pseudonáhodný čísel ve čtecích zařízeních funguje trochu jinak. Cílem této demonstrace je ověřit možnost získání stejných výzev s vysokou pravděpodobností za pomoci zařízení Chameleon Mini. Výzva karty je použita jako jedna ze složek inicializace šifry CRYPTO1, a tedy šifrovacích bitů (viz \ref{crypto1section}). \par
 
 \begin{figure*}[ht]\centering
@@ -455,7 +468,7 @@ Důvodu si můžeme všimnout na obrázku výsledku. Předpokladem pro úspěch 
 Oba důvody by mohly být vyřešeny použitím specializovaného hardware s možností preciznějšího časování pokusů. Tím může být například už zmíněný Proxmark 3, který obsahuje programovatelná hradlová pole FPGA\cite{Proxmark}. Analýza by tak mohla být prováděna přímo ze zařízení, čímž by se eliminoval přenos přes USB a logika by byla naprogramována přímo v hardware, bez jiných procesů vyžadujících pozornost procesoru.
 
 \section{Útok s emulovanou kartou}
-Pro tento útok je zapotřebí zařízení schopné emulovat karty MIFARE Classic vybavené obsahem paměti karty oběti. Chameleon Mini je schopný této emulace, ale lze s jeho pomocí získat pouze UID dané karty. Zařízení je tedy schopné obelstít pouze antikolizní fázi. Jako cíl útoku byly vybrány vstupní dveře fakulty vybavené čtecím zařízením. \par
+Pro tento útok je zapotřebí zařízení schopné emulovat karty MIFARE Classic vybavené obsahem paměti karty oběti. Chameleon Mini je schopný této emulace, ale lze s jeho pomocí získat pouze UID dané karty. Zařízení je tedy schopné, samo o sobě, obelstít pouze antikolizní fázi. Jako cíl útoku byly vybrány vstupní dveře fakulty vybavené čtecím zařízením. \par
 
 \begin{figure*}[ht]\centering
   \centering
@@ -479,6 +492,7 @@ Po zapnutí se Chameleon chová stejně jako karta původní a přiložením ke 
 Po prolomení CRYPTO1 se systémy využívající karty s tímto šifrováním spoléhají pouze na UID, které je uloženo jen pro čtení. Jak je ale vidět z provedeného útoku, není to nejbezpečnější metoda. Kromě dedikovaných zařízení na emulaci karet se dají sehnat čínské kopie karet MIFARE Classic s měnitelným UID. 
 
 \section{Relay útok}
+Posledním zkoušeným útokem je relay útok, jehož implementace je dokumentována v části \ref{relayImplementace}. Pro útok byla poskytnuta dvě zařízení Chameleon Mini. Obě dvě nastavena do konfigurace čtecího zařízení. Stejně jako u předchozí demonstrace, jako cíl byly vybrány vstupní dveře fakulty. Nejprve byl proveden jednoduchý relay útok, bez síťové komunikace, pro ověření konceptu. Program nejprve provede antikolizní fázi mezi Mole a kartou, a poté, s daty přijatými od karty, provede antikolizní fázi mezi Proxy a cílovým čtecím zařízením. Z předchozí demonstrace víme, že toto bude stačit k úspěšnémů útoku na bezpečnostní systém dveří. Relay útok je ale univerzální, a po antikolizní fázi pokračuje v přenášení komunikace. \par
 
 \begin{figure*}[ht]\centering
   \centering
@@ -486,6 +500,32 @@ Po prolomení CRYPTO1 se systémy využívající karty s tímto šifrováním s
   \caption{Testování relay útoku}    
   \label{obrazekPokusRelay}
 \end{figure*}
+
+\begin{lstlisting}[caption=Výstup programu MifareProxy.exe při demonstraci, label={relayZaznam}]
+** Chameleon Connected  via COM3 **
+** Chameleon Connected  via COM4 **
+>ReqA
+Mole - SEND 0007 26
+<NO DATA
+>ReqA
+Mole - SEND 0007 26
+<0400
+>Select
+Mole - SEND 0010 9320
+<9E314C8764
+>Select(9E314C8764)
+Mole - SEND 0048 93709E314C87644B91
+<Ack (08B6DD)
+*** anticollision on mole passed ***
+Proxy - SEND 0010 0400
+Proxy - < Received NO DATA
+Proxy - SEND 0028 9E314C8764
+Proxy - < Received NO DATA
+Proxy - SEND 0018 08B6DD
+Proxy - < Received NO DATA
+\end{lstlisting}
+Z výstupu programu při provádění relay útoku vidíme, že první část, antikolizní fáze mezi Mole a kartou, skončila úspěšně. Druhá část už úspěšná nebyla a útok skončil neúspěchem. Proxy sice odeslala data karty, ale čtecí zařízení neodeslalo žádnou odpověď. Z neodemčených dveří lze usoudit, že čtecím zařízením nebyla přijata data. Chameleon Mini v roli Proxy v útoku předstírá, že je karta. Přepnutím zařízení do konfigurace karty se však deaktivuje příkaz \verb|Send|, a nelze tak odesílat žádná data. \par
+Neúspěšně odeslaná data lze připsat Chameleon Mini, které v konfiguraci čtecího zařízení vytváří vlastní elektromagnetické pole, kterým komunikuje. Cílové čtecí zařízení však očekává modulaci jeho nosné vlny (viz část \ref{pasivniTagy}), což se neděje. Z předchozí demonstrace víme, že Chameleon Mini dokáže se čtecím zařízením komunikovat, avšak pouze v konfiguraci emulace karty. Tato konfigurace pouze pasivně emuluje kartu, a nelze se aktivně zapojovat do komunikace pomocí komunikačního portu. Relay útok za pomoci zařízení Chameleon Mini je tak možný pouze částečně, v roli Mole. Pro roli Proxy je nutné využít jiného zařízení, například již zmiňovaného Proxmark3, OpenPICC, nebo standardní čtecí zařízení umožňující emulaci karet. Druhou možností je implementace odesílání dat v konfiguraci emulace karet do open source firmware Chameleon Mini. Zde by se ovšem mohl vyskytnout problém z první demonstrace (viz \ref{vyhodnoceniKryptoAnalyza}), kdy USB sběrnice neumožňuje komunikaci v reálném čase.
 
 \chapter{Závěr}
 \label{zaver}
