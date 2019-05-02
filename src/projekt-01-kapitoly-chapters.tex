@@ -72,7 +72,7 @@ Nedílnou součástí čtecího zařízení je anténa. Vysílač i příjmač m
 %                                   NADPIS                      
 \chapter{Chytré karty Mifare Classic\textsuperscript{\textregistered}}
 \label{chytre_karty}
-V této kapitole jsou popsány obecně chytré karty a jejich typy. Následuje představení značky Mifare a karet Mifare Classic. Na závěr budou představeny některé zranitelnosti těchto karet.
+V této kapitole jsou popsány obecně chytré karty a jejich typy. Následuje popis komunikačních standardů chytrých karet a představení značky Mifare. Následuje podrobný popis karet Mifare Classic, jejich struktura paměti, využitý algoritmus CRYPTO1, autentizační fáze karty a její komunikační protokol.
 
 \section{Co jsou chytré karty}
 Chytré karty, jak už název napovídá, jsou karty, které mohou být použity chytrým způsobem. Za chytrou kartu považujeme plastovou kartu s integrovaným obvodem. Takové karty lze obecně považovat za čipové karty, a ty mohou být v kontaktní, nebo bezkontaktní variantě. Kontaktní karty se vkládají do čtecích zařízení, které naváže fyzický kontakt se zlatě zbarveným rozhraním karty. Bezkontaktní karty stačí dostat do blízkosti čtecího zařízení. Napájení a komunikace je poté zajištěna pomocí~RFID. Pod pojmem ''chytrá karta'' si obyčejně člověk představí platební kartu. Mohou ale být použity i ve formě elektronických pasů, občanských průkazů, přístupových karet, jako zabezpečení proti krádeži apod. Ne~každá karta vyžaduje stejné zabezpečení. Některé ho nevyžadují vůbec. Například jednoduché tagy vysílající své~ID jako inventarizační systém ve skladech. Jiné vyžadují složité  kryptografické mechanismy zajišťující soukromí přenášených dat. 
@@ -86,9 +86,6 @@ MAC je krátká informace odesílána s daty, která dokáže zajistit integritu
 Tag se zabezpečenou pamětí implementuje nějaký kryptografický protokol pro správu přístupu k paměti. Tag a čtecí zařízení se nejprve vzájemně autentizují, a teprve poté je povolen přístup k paměti. Data z paměti jsou před odesláním většinou nejprve zašifrována relačním klíčem, aby byla zajištěna jejich bezpečnost. Paměť některých tagů je rozdělena do menších oddílů, z nichž každý má vlastní klíč. Toto uspořádání umožňuje použít jeden tag k více aplikacím, přičemž každé aplikaci náleží jiný klíč.
 \par
 Nejpokročilejšími jsou zabezpečené tagy s mikrokontrolerem, který umožňuje nahrát různou funkcionalitu. Tyto tagy obvykle implementují bezpečnostní standardy jako například Global Platform. Šifrování, verifikace a další symetrické i asymetrické kryptografické metody jsou zajištěny kryptografickými koprocesory přímo na tagu\cite{Mifare_Classic_story}. Správný chod mikrokontroleru je zabezpečen například senzory vysokého a nízkého napětí, teploty nebo frekvence, filtrem vstupu hodinového signálu nebo aktivním stíněním\cite{NXP_Microcontroller_overview}.
-
-\subsection{Message authentication code}
-
 
 \section{Standardy komunikace chytrých karet}
 Standard ISO~14443 je určena zejména pro identifikační a platební karty. Skládá se ze čtyř částí. První část s označením {ISO~14443-1} popisuje zejména fyzikální charakteristiky karty, její velikost a odolnost proti mechanickému namáhání a působení elektrických a magnetických polí. Druhá část ({ISO~14443-2}) udává charakteristiky elektromagnetického pole, které zajišťuje napájení a obousměrnou komunikaci mezi čtecím zařízením a kartou. Čtecí zařízení je zde označováno jako~PCD, tedy Proximity Coupling Device, a karta jako~PICC, což je zkratka pro Proximity Integrated Circuit Card. Zde jsou také definovány dvě metody přenosu dat, typ A a typ B. Ty se liší v kódování, a v modulaci frekvencí. Třetí část ({ISO~14443-3}) uvádí, jak má čtecí zařízení postupovat při inicializaci komunikace s kartou, tedy formát bytů, časování a obsah příkazů REQ a ATQ. Dále popisuje jak detekovat a komunikovat s pouze jednou kartou z mnoha v dosahu zařízení, antikolizní metody. Poslední část ({ISO~14443-4})  popisuje protokoly a příkazy používané na vyšších vrstvách komunikace po inicializaci\cite{ISO14443}.
@@ -147,8 +144,6 @@ Na datových blocích jsou uložena libovolná data, nebo jsou konfigurovány ja
   \caption{Struktura paměti sector traileru a bloku s hodnotou\cite{PracticalAttackOnMifare}}    
   \label{obrazekStrukturaSpecialnichBloku}
 \end{figure*}
-
-% subsection struktura_paměti (end)
 
 \subsection{CRYPTO1}
 \label{crypto1section}
@@ -231,8 +226,7 @@ Po autentizaci následuje šifrovaná komunikace s kartou. Příkazy Read a Writ
 
 \chapter{Známé zranitelnosti}
 \label{zranitelnosti}
-Zabezpečení není silná stránka karet Mifare Classic. Tato podkapitola obsahuje popis jednotlivých nedostatků. Nedostatečná délka šifrovacích klíčů je první z nich. Následuje předvídatelnost výzev posílaných při autentizaci.
-%Nejjednodušším útokem na chytré karty je takzvaný replay attack. K provedení je nutné z komunikace zachytit~UID, které posílá karta, a poté toto stejné~UID vysílat. Tento útok lze provést nad systémy, které požadují pouze odeslané~UID. Karty Mifare Classic jsou složitější. Útoky na ně se zaměřují na chyby nebo zranitelné místa v jejich návrhu\cite{Mifare_Classic_story}.
+Zabezpečení není silná stránka karet Mifare Classic. Tato podkapitola obsahuje popis jednotlivých nedostatků. Nedostatečná délka šifrovacích klíčů je první z nich. Následuje předvídatelnost výzev posílaných při autentizaci. Popsáno je také nedostatečné řešení výpočtu paritních bitů. Další zranitelnosti jsou více kryptografikého rázu s jejichž pomocí lze získat aktuální stav šifry a vrátit ho do stavu kdy obsahoval tajný klíč sektoru. Nakonec je popsána zranitelnost při autentizaci více sektorů, která byla pojmenována jako vnořená autentizace.
 \par
 \section{Krátké šifrovací klíče}
 Pro šifrování karet se používají 48bitové klíče. Tato délka klíčů je ale příliš malá na to, aby zabránila úspěšnému brute force útoku v dosažitelném čase. Proto bylo zavedeno zpoždění v komunikaci a v autentizaci. Každý pokus by trval 6 milisekund. Díky této kompenzaci by online brute force útok na jeden sektor, prohledávající všech $2^{48}$ možných klíčů, trval více než 44~tisíc let. Odhalení algoritmu šifry CRYPTO1 umožnilo provést offline brute force útok. V takovém případě útočník nemusí komunikovat se zařízením pod útokem. Stačí mu pouze záznam komunikace, tím se eliminuje zavedené zpoždění. V prosinci 2007 Nohl a Plötz uvedli, že zařízení za 100\$ dokáže najít klíč přibližně za týden. Tato doba lze dál zkrátit přidáním paměti\cite{Cryptanalisis}.
@@ -266,17 +260,14 @@ Pro získání aktuálního stavu registru v CRYPTO1 existují dvě metody. Prvn
 \par
 Druhá metoda využívá chyby v návrhu filtrační funkce \ref{filterFunction}. Konkrétně toho, že její vstupy jsou pouze na lichých pozicích registru. Vstupním požadavkem je část keystreamu. Bity LFSR použité při výpočtu sudých a lichých bitů keystreamu lze generovat odděleně. Rozdělením také zpětné vazby na dvě části lze zkombinovat tyto sudé a liché části, čímž vzniknou právě ty stavy LFSR, které generují daný keystream.\cite{Dismantling_Mifare_Classic}
 
-
 \section{Vnořená autentizace}
-Za předpokladu, že útočník zná a je už ověřen vůči nějakému bloku karty, autentizace vůči dalším blokům probíhá trochu jinak než první. Další autentizaci zahájí útočník odesláním požadavku o autentizaci šifrovaný původním klíčem předchozího bloku. Po zpracování požadavku je vnitřní stav šifry CRYPTO1 nastaven na klíč nového sektoru a autentizační protokol popsaný v \ref{autentizace} začíná od začátku (ovšem bez antikolizní fáze). Změna nastává při odesílání výzvy $n_T$. Ta je totiž nyní odeslána zašifrovaná s tím, že pro šifrování byl použit již nový klíč. Se znalostí šifrování paritních bitů z \ref{paritni_bity} je možné zredukovat $2^16$ výzev na pouhých 64. Kvůli implementaci slabého pseudonáhodného generátoru čísel lze téměř s jistotou určit, která výzva je ta správná. Odeslaná výzva závisí na takzvané vzdálenosti od předchozího pokusu o autentizaci. Tato vzdálenost byla popsána v \cite{Dismantling_Mifare_Classic} jako počet posunutí registru generátoru čísel. Pomocí odhadnuté výzvy lze odhalit 32 bitů šifrovacích bitů (keystream)\cite{Dismantling_Mifare_Classic}.
+Za předpokladu, že útočník zná a je už ověřen vůči nějakému bloku karty, autentizace vůči dalším blokům probíhá trochu jinak než první. Další autentizaci zahájí útočník odesláním požadavku o autentizaci šifrovaný původním klíčem předchozího bloku. Po zpracování požadavku je vnitřní stav šifry CRYPTO1 nastaven na klíč nového sektoru a autentizační protokol popsaný v \ref{autentizace} začíná od začátku (ovšem bez antikolizní fáze). Změna nastává při odesílání výzvy $n_T$. Ta je totiž nyní odeslána zašifrovaná s tím, že pro šifrování byl použit již nový klíč. Se znalostí šifrování paritních bitů z \ref{paritni_bity} je možné zredukovat $2^{16}$ výzev na pouhých 64. Kvůli implementaci slabého pseudonáhodného generátoru čísel lze téměř s jistotou určit, která výzva je ta správná. Odeslaná výzva závisí na takzvané vzdálenosti od předchozího pokusu o autentizaci. Tato vzdálenost byla popsána v \cite{Dismantling_Mifare_Classic} jako počet posunutí registru generátoru čísel. Pomocí odhadnuté výzvy lze odhalit 32 bitů šifrovacích bitů (keystream)\cite{Dismantling_Mifare_Classic}.
 Tuto slabinu využívají například útoky popsané v \cite{Cryptanalisis} a v \cite{Wirelessly_Pickpocketing} kde je útok nazván vnořeným útokem (nested attack).
 
 %                               NADPIS                      
 \chapter{Chameleon Mini}
 \label{chameleon_mini}
-
-V této kapitole bude představeno zařízení Chameleon Mini, jeho hardware, firmware a s tím i podporovanou sadu příkazů.
-
+V této kapitole bude představeno zařízení Chameleon Mini, jeho původ, využití, hardware a výběr podporovaných příkazů.
 \par
 
 Chameleon Mini je zařízení velikosti běžné kreditní karty německé firmy Kasper \& Oswald.  Zařízení je navrženo jako univerzální nástroj pro praktickou bezpečnostní analýzu NFC\footnotemark a RFID systémů, penetrační testování nebo různé jiné aplikace koncových uživatelů. Tato volně programovatelná platforma umožňuje emulovat existující komerční chytré karty, a to včetně kryptografických funkcí a unikátních identifikátorů (UID). Dále může být využito v různých scénářích útoků, na odposlech NFC a RFID komunikace nebo funkční testování RFID vybavení. O bezstarostné nahrávání firmware se stará USB zavaděč. Pomocí praktické a lehce zapamatovatelné příkazové sady lze měnit nastavení a chování zařízení. Zároveň dokáže do vnitřní paměti uložit a virtualizovat až osm bezkontaktních karet.\cite{ChameleonKickStarter} 
@@ -537,5 +528,3 @@ Vzhledem k tomu, že relay útok je nezávislý na šifrování karty, je zabezp
 \chapter{Závěr}
 \label{zaver}
 
-
-%===============================================================================
