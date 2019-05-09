@@ -101,7 +101,7 @@ Mifare\textsuperscript{\textregistered} je obchodní značka rakouské společno
 
 Karty Mifare Classic\textsuperscript{\textregistered} byly vyvinuty již v roce~1994 a brzy se staly úspěšným produktem. Původně byly navrženy jako karty se zabezpečenou pamětí. Byly proto používány v různých odvětvích, například v hromadné dopravě, ve školních kampusech nebo jako zaměstnanecké karty. Data a autentizace jsou šifrovány proprietární šifrou CRYPTO1. Zabezpečení ale není nejsilnější stránkou těchto karet. Pro porovnání i mnohem starší DES~šifrování odolá o několik řádů déle útokům hrubou silou (brute force). Toho si je firma vědoma a nadále tyto karty nedoporučuje pro aplikace s důrazem na zabezpečení. Požadavky na bezpečnost vedly k vývoji dvou nových, lépe zabezpečených typů karet Mifare Plus a Mifare DESFire\cite{Mifare_Classic_story}\cite{Mifare_Classic_Official_about}. 
 \par
-Chytré karty Mifare Plus\textsuperscript{\textregistered} jsou nástupcem karet Classic. Zpětná kompatibilita je zajištěna podporou starší a méně bezpečné šifry CRYPTO1. Je tedy možné postupně modernizovat již zavedené systémy, i když tento způsob neodstraňuje všechna rizika karet Classic. Navíc je implementována mnohem bezpečnější 128bitová AES~šifra\cite{Mifare_Plus_Official}. Karty Mifare DESFire\textsuperscript{\textregistered} už šifrování CRYPTO1 nepodporují vůbec. Podporují ovšem šifrování~DES~a~AES, komunikaci pomocí~NFC a až 28~různých aplikací na jedné kartě\cite{Mifare_DESFire_Official}. V~České Republice je používají například České dráhy ve svém produktu In Karta\cite{Ceske_Drahy_Podminky_InKarta}. Naopak Ultralight\textsuperscript{\textregistered} jsou velmi levné karty s krátkou životností a malou pamětí. Jsou vhodné pro jednorázové použití jako celodenní jízdenky nebo vstupenky na velké události\cite{Mifare_Ultralight_Official}. Každá z těchto karet se dělí na další dva až čtyři podtypy, které se liší v různých parametrech nebo nabízených vlastnostech karty.
+Chytré karty Mifare Plus\textsuperscript{\textregistered} jsou nástupcem karet Classic. Zpětná kompatibilita je zajištěna podporou starší a méně bezpečné šifry CRYPTO1. Je tedy možné postupně modernizovat již zavedené systémy, i když tento způsob neodstraňuje všechna rizika karet Classic. Navíc je implementována mnohem bezpečnější 128bitová AES~šifra. Karty Mifare DESFire\textsuperscript{\textregistered} už šifrování CRYPTO1 nepodporují vůbec. Podporují ovšem šifrování~DES~a~AES, komunikaci pomocí~NFC a až 28~různých aplikací na jedné kartě\cite{Mifare_Classic_Official_about}. V~České Republice je používají například České dráhy ve svém produktu In Karta\cite{Ceske_Drahy_Podminky_InKarta}. Naopak Ultralight\textsuperscript{\textregistered} jsou velmi levné karty s krátkou životností a malou pamětí. Jsou vhodné pro jednorázové použití jako celodenní jízdenky nebo vstupenky na velké události\cite{Mifare_Classic_Official_about}. Každá z těchto karet se dělí na další dva až čtyři podtypy, které se liší v různých parametrech nebo nabízených vlastnostech karty.
 
 \begin{table}[]
 \begin{tabular}{lllll}
@@ -329,12 +329,18 @@ Jak již bylo zmíněno, pro interakci s uživatelem jsou na zařízení dvě ko
 Každý z těchto příkazů podporuje nastavení (''=''), získání aktuálního stavu (''?'') a nápovědu (''=?''). \par
 Stav zařízení v terénu lze zjišťovat dvěma LED diodami, které se nastavují příkazy \verb|Ledred| a \verb|Ledgreen|. Diody mohou indikovat například změnu a stav paměti, komunikaci s terminálem nebo přítomnost elektromagnetického pole čtecího zařízení. Je jen na uživateli, jak diody nastaví.\cite{ChameleonDocs}
 
-    \chapter{Demonstrace vybraných zranitelností}
-Tato kapitola se věnuje návrhu a implementaci tří vybraných zranitelností karet Mifare Classic. Nejprve se zaměřím na analýzu předvídatelných výzev karty Mifare Classic popsaných v části \ref{predvidatelne_nonce}. Následují možnosti a úskalí emulace karet pomocí zařízení Chameleon Mini. Nakonec nastíním princip a provedení relay útoku.\par 
+    
+    \chapter{Testovací prostředí a podpůrné nástroje}
+Tato kapitola se věnuje testovacímu prostředí, ve kterém budou demonstrovany vybrané zranitelnosti. Některé demonstrace vyžadují implementační část. Pro usnadnění práce byla implementována knihovna tříd. Dokumentace její implementace je také součástí této kapitoly.
+
+\section{Testovací prostředí}
+Testování vybraných zranitelností probíhalo v reálném prostředí na čtecím zařízení HID RP10\footnotemark. Po přiložení osobní karty studenta, či učitele je možné otevřít dveře a vstoupit. Karty používané studenty jsou mezinárodní studentské ISIC karty, případně VUT karty. Tyto karty jsou typu Mifare Classic, a jsou tedy vhodné k těmto demonstracím. Testování implementovaných demonstrací probíhalo na operačním systému Windows 10 Pro. Při testování byla použita zařízení Chameleon Mini, popsaná v kapitole \ref{chameleon_mini}.\par
+\footnotetext{\url{https://www.sourcesecurity.com/hid-rp10-access-control-reader-technical-details.html}}
+
 
 \section{Implementace modulů}
 \label{implementaceModulu}
-První a poslední demonstrace vyžadují programovou implementaci. Nejdříve byly implementovány takzvané moduly, tedy třídy abstrahující komunikaci se zařízením Chameleon Mini nebo poskytující pomocné funkce. Všechny moduly jsou zapouzdřeny v knihovně tříd \verb|MifareModules|. Každý z modulů má vlastnost \verb|Verbose| typu \verb|Boolean|. Jejím nastavením na \verb|true| začnou moduly zapisovat aktuální stav na standardní výstup k ulehčení ladění. Celá programová část této práce byla realizována v jazyce C\# .Net Framework verze 4.6.
+První a poslední demonstrace vyžadují programovou implementaci. Nejdříve byly implementovány takzvané moduly, tedy třídy abstrahující komunikaci se zařízením Chameleon Mini nebo poskytující pomocné funkce. Všechny moduly jsou zapouzdřeny v knihovně tříd \verb|MifareModules|. Některé z modulů mají vlastnost \verb|Verbose| typu \verb|Boolean|. Jejím nastavením na \verb|true| začnou moduly zapisovat aktuální stav na standardní výstup k ulehčení ladění. Celá programová část této práce byla realizována v jazyce C\# .Net Framework verze 4.6.
 
 \subsection*{SerialModule}
 Třída \verb|SerialModule| pozměňuje funkcionalitu \verb|System.IO.Ports.SerialPort| (dále jen \\\verb|SerialPort|) tak, aby vyhovoval požadavkům modulů vyšší vrstvy. V parametru konstruktoru je předávána třída \verb|SerialModuleConfig|, která obsahuje veškeré možné nastavení komunikace přes sériový port. Třída je předpřipravená tak, že beze změn zajišťuje komunikaci se zařízením Chameleon Mini na portu ''COM3''. Konstruktor vytvoří komponentu \verb|SerialPort| se zadanou konfigurací a rovnou jej otevře pro komunikaci.
@@ -380,23 +386,45 @@ public string AuthenticateForBlock(string blockNumber)
 private string Get(ISOCode code)
 \end{lstlisting}
 
-Antikolizní fáze protokolu ISO~14443 je inicializována metodou \verb|ReqA()|. Metoda \verb|Select()| odešle příkaz \emph{Select} podle protokolu a pomocí metody \verb|SelectUid(string)| je vybrána karta na základě jejího UID. Po této sekvenci je antikolizní fáze. Metoda \verb|AuthenticateForBlock(string)| začne s autentizační fází vůči paměťovému bloku na kartě. Vybraný blok je zadán ve formě řetězce hexadecimálního čísla. Všechny metody ke zprávám připojují kódy protokolu ISO~14443 nebo případně kontrolní součty CRC. Každá z těchto metod vrací odpovědi karty. Nedílnou součástí tohoto modulu je výčtový typ \verb|ISOCode| s hodnotami kódů standardu. Čísla kódů z výčtového typu získává privátní metoda \verb|Get(ISOCode)|.
+Antikolizní fáze protokolu ISO~14443 je inicializována metodou \verb|ReqA()|. Metoda \verb|Select()| odešle příkaz \emph{Select} podle protokolu a pomocí metody \verb|SelectUid(string)| je vybrána karta na základě jejího UID. Po této sekvenci je antikolizní fáze. Metoda \\\verb|AuthenticateForBlock(string)| začne s autentizační fází vůči paměťovému bloku na kartě. Vybraný blok je zadán ve formě řetězce hexadecimálního čísla. Všechny metody ke zprávám připojují kódy protokolu ISO~14443 nebo případně kontrolní součty CRC. Každá z těchto metod vrací odpovědi karty. Nedílnou součástí tohoto modulu je výčtový typ \verb|ISOCode| s hodnotami kódů standardu. Čísla kódů z výčtového typu získává privátní metoda \verb|Get(ISOCode)|.
 
 \subsection*{CRCModule}
-Třída tohoto modulu zapouzdřuje a zjednodušuje použití externí knihovny \verb|Nito.KitchenSink.CRC|\footnotemark, která slouží pro výpočet kontrolních součtů CRC. Konstruktor vytvoří instanci třídy \verb|CRC16| se správným nastavením pro použití v předchozím modulu. Jediná metoda třídy \verb|Hash(string)| vypočítá a vrátí kontrolní součet zadané hodnoty. 
+Třída tohoto modulu zapouzdřuje a zjednodušuje použití externí knihovny \\\verb|Nito.KitchenSink.CRC|\footnotemark, která slouží pro výpočet kontrolních součtů CRC. Konstruktor vytvoří instanci třídy \verb|CRC16| se správným nastavením pro použití v předchozím modulu. Jediná metoda třídy \verb|Hash(string)| vypočítá a vrátí kontrolní součet zadané hodnoty. 
 
 \footnotetext{\url{https://www.nuget.org/packages/Nito.KitchenSink.CRC/}}
 
+\chapter{Demonstrace vybraných zranitelností}
+Tato kapitola se věnuje návrhu, implementaci, provedení a vyhodnocení tří vybraných zranitelností karet Mifare Classic. Nejprve se zaměřím na analýzu předvídatelných výzev karty Mifare Classic popsaných v části \ref{predvidatelne_nonce}. Následují možnosti a úskalí emulace karet pomocí zařízení Chameleon Mini. Nakonec nastíním princip a provedení relay útoku.\par 
+
 \section{Časová krypto-analýza}
 \label{casovaKryptoanalyza}
-Jako první demonstraci jsem vybral zranitelnost nedostatečné náhodnosti generování výzev karty ve fázi autentizace, popsané v části \ref{predvidatelne_nonce}. Karty Mifare Classic generují 16bitové výzvy 32bitovým posuvným registrem s lineární zpětnou vazbou, jehož stav se mění každou periodu hodinového signálu karty a při startu karty se jeho stav resetuje vždy do stejného stavu. Perioda hodinového signálu je 9,44$\mu$s, zatímco perioda generátoru pseudonáhodných čísel je 65535. Generátor tedy vyčerpá všechny stavy během přibližně 0,618s. \par
-S těmito znalostmi můžeme navrhnout dva způsoby, jak si kartou nechat vygenerovat vždy stejnou výzvu. První možností je mezi každým požadavkem o autentizaci čekat stanovený čas. Protože poskytnuté zařízení Chameleon Mini dokáže ovládat své elektromagnetické pole, vybral jsem pro implementaci analýzy druhou možnost. Čekat mezi startem karty a autentizací konstantní čas.\par
-Tato demonstrace vyžaduje implementaci skriptu či programu, který automatizuje obsluhu elektromagnetického pole a průběh antikolizní a autentizační fáze. Program \emph{CryptoAnalysis.exe} využívá knihovny \verb|MifareModules| (viz část \ref{implementaceModulu}), jejíž moduly jsou inicializovány hned po startu. Dále je inicializován prázdný seznam výzev typu \verb|List<string>| a třída \verb|Stopwatch| pro stopování času jednotlivých pokusů. Inicializační část následuje jádro programu - cyklus opakující pokusy o autentizaci. Na začátku cyklu jsou spuštěny stopky a elektromagnetické pole zařízení. Po krátkém čekání je zahájena antikolizní fáze. Pokud při ní nastane chyba (například karta nestihne odpovědět), je algoritmus vrácen zpět na začátek cyklu. Na antikolizní fázi navazuje pokus o autentizaci. Ten je realizován odesláním příkazu \emph{0x60 00}, tedy autentizace vůči prvnímu sektoru. Voláním metody \verb|CardModule.AuthenticateForBlock("00")| získáme přijatou výzvu karty. V tuto chvíli je vypnuto elektromagnetické pole a výzva je uložena do seznamu výzev. Před návratem na začátek cyklu se ještě vytiskne informace o přijaté výzvě a čase cyklu. Na konci programu jsou v seznamu přijatých výzev vyhledány duplikáty a vypsán výsledek. \par
+Jako první demonstraci jsem vybral zranitelnost nedostatečné náhodnosti generování výzev karty ve fázi autentizace, popsané v části \ref{predvidatelne_nonce}. Tato analýza se týká pouze karet, protože generátor pseudonáhodný čísel ve čtecích zařízeních funguje jiným způsobem. Karty Mifare Classic generují 32bitové výzvy 16bitovým posuvným registrem s lineární zpětnou vazbou, jehož stav se mění každou periodu hodinového signálu karty a při startu karty se jeho stav resetuje vždy do stejného stavu. Perioda hodinového signálu je 9,44$\mu$s, zatímco perioda generátoru pseudonáhodných čísel je 65535. Generátor tedy vyčerpá všechny stavy během přibližně 0,618s. Odesláním požadavku o autentizaci vždy ve správný čas docílíme téměř konstantní výzvy karty. \par
+S těmito znalostmi můžeme navrhnout dva způsoby, jak si kartou nechat vygenerovat vždy stejnou výzvu. První možností je mezi každým požadavkem o autentizaci čekat stanovený čas. Tímto počkáme až proběhne perioda generátoru pseudonáhodných čísel a jeho stav se bude rovnat stavu v době předchozího pokusu. Druhou možností je odesílat pokusy o autentizaci vždy ve stejný čas od startu karty. Startem karty se generátor pseudonáhodných čísel resetuje do konstantního stavu. Vyčkáním generátor vygeneruje vždy stejnou výzvu.\par
+První možnost je z hlediska času náročnější. Aby bylo dosaženo požadovaného výsledku, musejí být žádosti odesílány pouze každých 0,618s. Naopak pokusy v druhé možnosti lze opakovat téměř ihned po získání výzvy. Za stejnou dobu tak lze získat větší množství výzev k porovnání. Využitím příkazu \verb|Field| zařízení Chameleon Mini můžeme ovládat stav elektromagnetického pole zařízení a tím start karty. K analýze této zranitelnosti tak bude využita druhá možnost.\par
+Cílem této demonstrace je ověřit možnost získání stejných výzev s vysokou pravděpodobností za pomoci zařízení Chameleon Mini. Výzva karty je použita jako jedna ze složek vstupního bitu použitého při inicializaci šifry CRYPTO1 (viz část \ref{crypto1section}). Ovládáním výzvy karty útočník ovládne celý inicializační proces šifry karty, a tím i šifrovací bity použité k šifrování důvěrného textu. \par
+\subsection{Implementace}
+Tato demonstrace vyžaduje implementaci skriptu či programu, který automatizuje obsluhu elektromagnetického pole a průběh antikolizní a autentizační fáze. Chameleon v tomto případě napodobuje čtecí zařízení, bude tedy nastaven do konfigurace \verb|ISO14443A_READER|. Při demonstraci bude Chameleon Mini opakovaně zapínat a vypínat své elektromagnetické pole a mezi tím vždy proběhne požadavek o autentizaci s kartou. Karta odešle výzvu, ta se uloží do seznamu a cyklus začíná od znova. Nakonec bude seznam výzev prohledán na duplikáty.\par
+Program \emph{CryptoAnalysis.exe} využívá knihovny \verb|MifareModules| (viz část \ref{implementaceModulu}), jejíž moduly jsou inicializovány hned po startu. Dále je inicializován prázdný seznam výzev typu \verb|List<string>| a třída \verb|Stopwatch| pro stopování času jednotlivých pokusů. Inicializační část následuje jádro programu - cyklus opakující pokusy o autentizaci. Na začátku cyklu jsou spuštěny stopky a elektromagnetické pole zařízení. Po krátkém čekání je zahájena antikolizní fáze. Pokud při ní nastane chyba (například karta nestihne odpovědět), je algoritmus vrácen zpět na začátek cyklu. Na antikolizní fázi navazuje pokus o autentizaci. Ten je realizován odesláním příkazu \emph{0x60 00}, tedy autentizace vůči prvnímu sektoru. Voláním metody \verb|CardModule.AuthenticateForBlock("00")| získáme přijatou výzvu karty. V tuto chvíli je vypnuto elektromagnetické pole a výzva je uložena do seznamu výzev. Před návratem na začátek cyklu se ještě vytiskne informace o přijaté výzvě a čase cyklu. Na konci programu jsou v seznamu přijatých výzev vyhledány duplikáty a vypsán výsledek. \par
 Chování programu lze měnit vstupními parametry. Nejdůležitější je parametr ''-p'', kterým lze nastavit jméno portu, na kterém poslouchá Chameleon Mini. Při nezadání parametru je nastaven port ''COM3''. Počet pokusů o autentizaci nastavuje parametr ''-r''(standardně 100 pokusů). Mezi každým odesláním zprávy při antikolizní a autentizační fázi lze nastavit čekání pomocí ''-w'' v milisekundách. Při odesílání zpráv těsně při sobě karta nemusí odpovědět včas, standardní čekací doba je 2ms. 
+
+\subsection{Provedení}
+\begin{figure*}[ht]\centering
+  \centering
+  \includegraphics[width=\linewidth]{obrazky-figures/obrazekKryptoanalyza.png}\\[1pt]  
+  \caption{Výsledek časové kryptoanalýzy (pro názornost pouze 20 pokusů)}    
+  \label{obrazekKryptoanalyza}
+\end{figure*}
+
+Program postupně provádí pokusy o autentizace a zaznamenává si výsledné výzvy karty. Po dokončení zadaného množství pokusů jsou v seznamu výzev nalezeny duplikáty. Jak je vidět na obrázku \ref{obrazekKryptoanalyza}, žádné duplikáty nalezeny nebyly. Toto chování se opakovalo i při zvýšení počtu pokusů. Kapitola \ref{predvidatelne_nonce} představuje řešení slabiny karet vydáním novější verze Mifare Classic EV1. Na první pohled by se tak mohlo zdát, že cílová karta je tato novější verze, ale identifikace Chameleonem, příkazem \verb|Identify|, říká, že karta je původní Mifare Classic. Kromě použití příkazu \verb|Identify| si lze také všimnout UID karty. Zatímco délka UID testované karty jsou 4B, nové karty mají UID 7B dlouhé\cite{Mifare_Classic_Official_about}. Z toho vyplývá, že karta samotná není důvod neúspěchu analýzy.\par
+Důvodu si můžeme všimnout na obrázku výsledku. Můžeme na něm vidět výsledek dvaceti pokusů o autentizaci. Každý řádek vyjadřuje jeden pokus. Na řádku jsou vždy tři veličiny - přijatá výzva, uplynulý čas daného cyklu v milisekundách a v počtu cyklů procesoru. Předpokladem pro úspěch analýzy je precizní časování v řádu mikrosekund. Jednotlivé pokusy se neliší jen v počtu cyklů procesoru, ale také v milisekundách. Tyto nerovnosti jsou způsobeny možným přepínáním kontextu procesů plánovačem CPU a komunikace sériového portu, který je připojen přes sběrnici USB. Všechna data přenášená tímto způsobem jsou nahrávána do vyrovnávací paměti a jejich doba odeslání se může lišit\cite{RelayUtokBP}.\par
+Oba důvody by mohly být vyřešeny použitím specializovaného hardware s možností preciznějšího časování pokusů. Tím může být například už zmíněný Proxmark 3, který obsahuje programovatelná hradlová pole FPGA\cite{Proxmark}. Analýza by tak mohla být prováděna ze zařízení, čímž by se eliminoval přenos přes USB a logika by byla naprogramována přímo v hardware, bez jiných procesů vyžadujících pozornost procesoru. \par
+Tato demonstrace se do reálného prostředí příliš nehodí a je vhodná spíše do laboratorních podmínek. Je využitelná při kryptografické analýze karet Mifare Classic a jejich šifry CRYPTO1. 
 
 \section{Emulace karet}
 Předmětem další demonstrace je schopnost zařízení Chameleon Mini emulovat karty. Emulací rozumíme schopnost zařízení imitovat kartu při komunikaci s cizím čtecím zařízením. Aby mohla být emulace dostatečně důvěryhodná, musí zařízení pracovat stejně jako původní karta a mít k tomu dostatečné množství dat karty. Chameleon v současné době dokáže emulovat až 5 různých typů karet. Množství potřebných dat závisí na složitosti systému. Některé systémy mohou pracovat přímo s datovými či hodnotovými bloky karty, jiným stačí pouze autentizace karty. Samotným zařízením Chameleon Mini lze získat pouze UID karty. Pro získání celé paměti karty jsou potřeba sofistikovanější zařízení, například ProxMark 3 nebo standardní čtecí zařízení ve spojení s kryptoanalytickými skripty Mifare Classic Universal toolKit (MFCUK) a Mifare Classic Offline Cracker (MFOC)\cite{RelayUtokBP}. Tyto skripty využívají slabin popsaných v kapitole \ref{zranitelnosti}.
 Můžeme ale emulovat jen prázdnou kartu s nastaveným UID. Toto řešení nebude fungovat na všechny systémy, pouze na ty, kterým k ověření stačí úspěšná antikolizní fáze s platným UID.\par
+
+\subsection{Nastavení zařízení Chameleon Mini}
 Pro emulaci karty je nutné nastavit Chameleon Mini do správné konfigurace. Nejprve zjistíme typ emulované karty příkazem \verb|Identify|.
 
 \begin{lstlisting}[caption=Záznam postupu identifikace karty, label={ChameleonIdentify}]
@@ -421,61 +449,15 @@ Uid=9E314C87
 
 V lednu 2018 byla do firmware Chameleon Mini implementována funkce zjednodušující emulaci karet. Příkaz \verb|Clone| přepne zařízení do konfigurace čtečky, identifikuje přiloženou kartu a správně nakonfiguruje zařízení. Tato funkce lze také navázat na tlačítko (\verb|Rbutton=clone|) a klonovat karty přímo v terénu, bez použití nápadného počítače.
 
-\section{Relay útok}
-\label{relayImplementace}
-Poslední demonstrací je takzvaný relay útok. Jedná se o {man-in-the-middle} útok. Většina typů autentizací je založena na ujištění, že oba účastníci znají sdílený tajný klíč. Po autentizaci je veškerá komunikace šifrována, a pokud by útočník odposlechl takovou komunikaci, bez znalosti klíče jsou přenášená data stále zabezpečena. Bezkontaktní karty pracují na dálku (do 10cm) a jsou aktivovány vstupem do blízkosti čtecího zařízení. Útočník tak může bez vědomí vlastníka navázat spojení s kartou a přeposílat komunikaci vzdálenému čtecímu zařízení. To usoudí, že karta, a tedy i její uživatel je v blízkosti a vpustí útočníka. Ve skutečnosti může být karta vzdálená několik kilometrů. Data mezi kartou a čtecím zařízením lze posílat jakýmkoliv dostatečně rychlým, přenosovým médiem ({Wi-Fi}, 4G mobilní síť apod.). Přenášené zprávy sice nebudou pro útočníka čitelné, dokud je ale dokáže nezměněné přeposílat, tak mu to nevadí. Výhodou takového útoku je nezávislost na šifrovacím algoritmu systému.\par
-
-Pro uskutečnění relay útoku jsou nutná minimálně dvě zařízení propojená komunikační vrstvou. První zařízení se tváří jako legitimní čtecí zařízení a komunikuje s kartou oběti. Toto zařízení je označováno jako Mole. Druhé zařízení komunikuje s legitimním čtecím zařízením a tváří se jako karta oběti. V literatuře bývá označováno jako Proxy.\cite{PracticalRelayAttack} 
-
-\begin{figure*}[ht]\centering
-  \centering
-  \includegraphics[width=\linewidth]{obrazky-figures/relayAttack.png}\\[1pt]  
-  \caption{Schéma relay útoku}    
-  \label{obrazekRelayAttack}
-\end{figure*}
-
-Implementace útoku je rozdělena na dvě hlavní části. První část je zjednodušený celý útok tak, že zařízení Mole i Proxy jsou připojeny k jednomu programu a data se vyměňují takřka okamžitě v jednom procesu. Druhá část už zahrnuje komunikační vrstvu, a je tak možné komunikovat s jiným počítačem. Obě části jsou obsaženy v programu \emph{MifareProxy.exe} a je mezi nimi možné přepínat pomocí argumentů. Implementace opět využívá knihovny \verb|MifareModules|.
-\par
-\subsection*{Jednoduchý relay útok}
-Jednoduchý relay útok je standardní chování programu a je spíše demonstračního charakteru. Nejprve jsou inicializovány pomocné moduly pro komunikaci s oběma zařízeními Chameleon Mini. Program předpokládá, že jsou na portech ''COM3'' pro Proxy a ''COM4'' pro Mole. Případně je lze změnit argumenty ''--pcom'', respektive ''--mcom''. Následuje relay útok. Nejprve je provedena antikolizní fáze s kartou oběti. S odpověďmi je provedena antikolizní fáze také s cílovým čtecím zařízením. Poslední zpráva obsahující výzvu k autentizaci je odeslána kartě a ve smyčce se pak vyměňují data mezi zařízeními Mole a Proxy.
-
-\subsection*{Relay útok přes síť}
-Pro relay útok s komunikací přes síť je nutné nastavit program do módu Proxy argumentem ''-p'' a do módu Mole argumentem ''-m''. Jméno sériového portu se nastaví stejným způsobem jako u jednoduché verze. Komunikace probíhá přes TCP soket, kdy Proxy je klient a připojuje se k serveru Mole. Adresa~IP a port serveru je potřeba nastavit v obou instancích programu argumenty ''--mip'' a ''--mport''. \par
-Nejprve se opět inicializují obě zařízení Chameleon Mini. Po inicializaci vytvoří Mole server a počká na připojení Proxy. Připojením je vše připraveno k útoku. Jeho logika je prakticky stejná jako u jednoduchého útoku, s tím rozdílem, že data jsou posílána sítí a ne pouze sdílenou pamětí. Při komunikaci po síti se může vyskytnout problém s dlouhou dobou doručení, neboli latencí. Tento problém je nejmarkantnější u antikolizní fáze, neboť při ní mají čtečky striktní časování. Nejprve se provede antikolizní fáze s kartou, která nemá striktní časování, a přijatá data karty se odešlou Proxy. Proxy tak má k dispozici veškerá data nutná k této fázi a v jejím průběhu tak nemusí probíhat časově náročná síťová komunikace. 
-
-
-    \chapter{Vyhodnocení}
-Testování vybraných zranitelností probíhalo na půdě Fakulty informačních technologií VUT v Brně. Vstupní dveře fakulty jsou vybaveny čtecími zařízeními HID RP10\footnotemark. Po přiložení osobní karty studenta, či učitele je možné otevřít dveře a vstoupit do vnitřních prostor školy. Karty používané studenty jsou mezinárodní studentské ISIC karty, případně VUT karty. Tyto karty jsou  Testování implementovaných demonstrací probíhalo na operačním systému Windows 10 Pro.\par
-Cílem demonstrace relay útoku a emulace karet je obelstít čtecí zařízení tak, aby otevřelo dveře bez přítomnosti legitimní karty a umožnilo vstup cizímu člověku. Cílem časové kryptoanalýzy je ověřit slabinu karet Mifare Classic se zařízením Chameleon Mini.
-\footnotetext{\url{https://www.sourcesecurity.com/hid-rp10-access-control-reader-technical-details.html}}
-
-\section{Časová krypto-analýza}
-\label{vyhodnoceniKryptoAnalyza}
-Jako první byl proveden pokus o analýzu opakovatelných výzev karet Mifare Classic v autentizační fázi. Problematika opakovatelných výzev je popsána v kapitole \ref{predvidatelne_nonce}. Implementace programu automatizujícího útok dokumentuje část \ref{casovaKryptoanalyza}. Tato analýza se týká pouze karet, protože generátor pseudonáhodný čísel ve čtecích zařízeních funguje jiným způsobem. Cílem této demonstrace je ověřit možnost získání stejných výzev s vysokou pravděpodobností za pomoci zařízení Chameleon Mini. Výzva karty je použita jako jedna ze složek inicializace šifry CRYPTO1, a tedy šifrovacích bitů (viz \ref{crypto1section}). \par
-
-\begin{figure*}[ht]\centering
-  \centering
-  \includegraphics[width=\linewidth]{obrazky-figures/obrazekKryptoanalyza.png}\\[1pt]  
-  \caption{Výsledek časové kryptoanalýzy (pro názornost pouze 20 pokusů)}    
-  \label{obrazekKryptoanalyza}
-\end{figure*}
-
-Program postupně provádí pokusy o autentizace a zaznamenává si výsledné výzvy karty. Po dokončení zadaného množství pokusů jsou v seznamu výzev nalezeny duplikáty. Jak je vidět na obrázku \ref{obrazekKryptoanalyza}, žádné duplikáty nalezeny nebyly. Toto chování se opakovalo i při zvýšení počtu pokusů. Kapitola \ref{predvidatelne_nonce} představuje řešení slabiny karet vydáním novější verze Mifare Classic EV1. Na první pohled by se tak mohlo zdát, že cílová karta je tato verze, ale identifikace Chameleonem, příkazem \verb|Identify|, říká, že karta je původní Mifare Classic. Kromě použití příkazu \verb|Identify| si lze také všimnout UID karty. Zatímco délka UID testované karty jsou 4B, nové karty mají UID 7B dlouhé\cite{Mifare_Classic_Official_about}. Z toho vyplývá, že karta samotná není důvod neúspěchu analýzy.\par
-Důvodu si můžeme všimnout na obrázku výsledku. Předpokladem pro úspěch analýzy je precizní časování v řádu mikrosekund. Jednotlivé pokusy se neliší jen v počtu cyklů procesoru, ale také v milisekundách. Tyto nerovnosti jsou způsobeny možným přepínáním kontextu procesů plánovačem CPU a komunikace sériového portu, který je připojen přes sběrnici USB. Všechna data přenášená tímto způsobem jsou nahrávána do vyrovnávací paměti a jejich doba odeslání se může lišit\cite{RelayUtokBP}.\par
-Oba důvody by mohly být vyřešeny použitím specializovaného hardware s možností preciznějšího časování pokusů. Tím může být například už zmíněný Proxmark 3, který obsahuje programovatelná hradlová pole FPGA\cite{Proxmark}. Analýza by tak mohla být prováděna ze zařízení, čímž by se eliminoval přenos přes USB a logika by byla naprogramována přímo v hardware, bez jiných procesů vyžadujících pozornost procesoru.
-
-\section{Útok s emulovanou kartou}
-Pro tento útok je zapotřebí zařízení schopné emulovat karty Mifare Classic vybavené obsahem paměti karty oběti. Chameleon Mini je schopný této emulace, ale s jeho pomocí lze získat pouze UID dané karty. Zařízení je tedy schopné samo o sobě obelstít pouze antikolizní fázi. Jako cíl útoku byly vybrány vstupní dveře fakulty vybavené čtecím zařízením. \par
-
+\subsection{Provedení útoku}
 \begin{figure*}[ht]\centering
   \centering
   \includegraphics[width=\linewidth, angle=270]{obrazky-figures/obrazekPokusEmulace.jpg}\\[1pt]  
   \caption{Testování emulace karty}    
   \label{obrazekPokusEmulace}
 \end{figure*}
-Po zapnutí se Chameleon chová stejně jako karta původní a přiložením ke čtecímu zařízení odpovídá na jeho dotazy. Tento test skončil úspěšně. Po přiložení se světlo na čtecím zařízení rozsvítilo zeleně (patrné i na obrázku \ref{obrazekPokusEmulace}), signalizující úspěšnou identifikaci uživatele. To potvrdilo i následné odemčení vstupních dveří. K identifikaci a vstupu na fakultu tak stačí pouze úspěšná antikolizní fáze. Systém tak získá pouze UID uživatelovy karty a případná další potřebná data získá z vnitřní databáze. To můžeme vidět i na záznamu komunikace čtecího zařízení (viz výpis \ref{emulaceZaznam}).  Za povšimnutí stojí také to, že neproběhne pouze jedna identifikace uživatele. Čtecí zařízení provádí antikolizní algoritmus zhruba každých 100ms. 
+Po zapnutí se Chameleon chová stejně jako nakonfigurovaná karta a přiložením ke čtecímu zařízení odpovídá na jeho dotazy. Tento test skončil úspěšně. Po přiložení se světlo na čtecím zařízení rozsvítilo zeleně (patrné i na obrázku \ref{obrazekPokusEmulace}), signalizující úspěšnou identifikaci uživatele. To potvrdilo i následné odemčení vstupních dveří. K identifikaci a vstupu na fakultu tak stačí pouze úspěšná antikolizní fáze. Systém tak získá pouze UID uživatelovy karty a případná další potřebná data získá z vnitřní databáze. To můžeme vidět i na záznamu komunikace čtecího zařízení (viz výpis \ref{emulaceZaznam}). Tento výpis zobrazuje část z logů zařízení Chameleon Mini. Každý záznam (řádek) obsahuje čtyři informace. První dvě se týkají času přijetí, přesněji čas přijetí od startu zařízení a rozdíl časů aktuálního a předchozího přijetí. Druhé dvě se týkají velikosti a obsahu přijatých zpráv. Za povšimnutí stojí, že neproběhne pouze jedna identifikace uživatele. Čtecí zařízení provádí antikolizní algoritmus zhruba každých 100ms. 
 \par
-
 \begin{lstlisting}[caption=Část komunikace čtecího zařízení, label={emulaceZaznam}]
 04467 ms <  +102 ms>:      (1   bytes) [26                  ]
 04468 ms <    +1 ms>:      (2   bytes) [9320                ]
@@ -486,11 +468,38 @@ Po zapnutí se Chameleon chová stejně jako karta původní a přiložením ke 
 04575 ms <    +2 ms>:      (9   bytes) [93709e314c87644b91  ]
 04576 ms <    +1 ms>:      (4   bytes) [500057cd            ]
 \end{lstlisting}
-Po prolomení CRYPTO1 se systémy využívající karty s tímto šifrováním spoléhají pouze na UID, které je uloženo jen pro čtení. Jak je ale vidět z provedeného útoku, není to nejbezpečnější metoda. Kromě dedikovaných zařízení na emulaci karet, jako je zde použité Chameleon Mini, se dají sehnat čínské kopie karet Mifare Classic s měnitelným UID. \par
-Ke zvýšení zabezpečení systému z pohledu chytrých karet doporučuje i sama firma NXP Semiconductors využít novější typy karet se silnějším šifrováním. Je ale nutné si uvědomit, že bezpečnost se nedá zařídit pouze moderními kartami. Důležitá je celková architektura zabezpečení systému. Pokud zůstaneme u fakulty, není nutné opatřovat si zařízení schopné jakéhokoliv útoku, stačí si pro vstup vybrat jiné dveře, které nevyžadují identifikaci. Dalšími způsoby podobného prolamování bezpečnosti se zabývá sociální inženýrství.
+
+Po prolomení CRYPTO1 se systémy využívající karty s tímto šifrováním spoléhají pouze na UID, které je uloženo jen pro čtení. Jak je ale vidět z provedeného útoku, není to nejbezpečnější metoda. Chameleon Mini lze za předchozího správného nastavení použít úplně samostatně (bez počítače k ovládání) a provádět tento typ útoku přímo v terénu. Útočník tak pomocí tohoto zařízení může, s trochou nenápadnosti, napadnout jakýkoliv systém využívající podporované karty. Kromě dedikovaných zařízení na emulaci karet, jako je zde použité Chameleon Mini, se dají sehnat čínské kopie karet Mifare Classic s měnitelným UID.  \par
+Ke zvýšení zabezpečení systému z pohledu chytrých karet doporučuje i sama firma NXP Semiconductors využít novější typy karet se silnějším šifrováním. Je ale nutné si uvědomit, že bezpečnost se nedá zařídit pouze moderními kartami. Důležitá je celková architektura zabezpečení systému. Není nutné opatřovat si složité zařízení schopné jakéhokoliv útoku, pokud si stačí pro vstup vybrat například jiné dveře, které nevyžadují identifikaci. Dalšími způsoby podobného prolamování bezpečnosti se zabývá sociální inženýrství.\par
 
 \section{Relay útok}
-Posledním zkoušeným útokem je relay útok, jehož implementace je dokumentována v části \ref{relayImplementace}. Pro útok byla poskytnuta dvě zařízení Chameleon Mini. Obě dvě byla nastavena do konfigurace čtecího zařízení. Stejně jako u předchozí demonstrace jako cíl byly vybrány vstupní dveře fakulty. Nejprve byl proveden jednoduchý relay útok bez síťové komunikace, pro ověření konceptu. Program nejprve provede antikolizní fázi mezi Mole a kartou a poté, s daty přijatými od karty, provede antikolizní fázi mezi Proxy a cílovým čtecím zařízením. Z předchozí demonstrace víme, že toto bude stačit k úspěšnému útoku na bezpečnostní systém dveří. Relay útok je ale univerzální a po antikolizní fázi pokračuje v přenášení komunikace. \par
+
+Poslední demonstrací je takzvaný relay útok. Jedná se o {man-in-the-middle} útok. Většina typů autentizací je založena na ujištění, že oba účastníci znají sdílený tajný klíč. Po autentizaci je veškerá komunikace šifrována tímto tajným klíčem a pokud by útočník odposlechl takovou komunikaci, bez znalosti klíče jsou přenášená data stále zabezpečena. Bezkontaktní karty pracují na dálku (do 10cm) a jsou aktivovány vstupem do blízkosti čtecího zařízení. Útočník tak může bez vědomí vlastníka navázat spojení s kartou pomocí vlastního čtecího zařízení a přeposílat komunikaci druhému útočníkovi u vzdáleného čtecího zařízení. Přijatou komunikaci čtecímu zařízení druhý útočník předá, to usoudí, že karta, a tedy i její legitimní uživatel, jsou v blízkosti a vpustí útočníka. Ve skutečnosti může být karta vzdálená několik kilometrů. Data mezi kartou a čtecím zařízením lze posílat jakýmkoliv dostatečně rychlým, přenosovým médiem ({Wi-Fi}, 4G mobilní síť apod.). Přenášené zprávy sice nebudou pro útočníka čitelné, dokud je ale dokáže nezměněné přeposílat včas, tak mu to nevadí. Výhodou takového útoku je nezávislost na šifrovacím algoritmu systému.\par
+
+Pro uskutečnění relay útoku jsou nutná minimálně dvě zařízení, v tomto případe Chameleon Mini, propojená komunikační vrstvou. První zařízení se tváří jako legitimní čtecí zařízení a komunikuje s kartou oběti. Toto zařízení je označováno jako Mole. Druhé zařízení komunikuje s legitimním čtecím zařízením a tváří se jako karta oběti. V literatuře bývá označováno jako Proxy.\cite{PracticalRelayAttack} \par
+
+
+\begin{figure*}[ht]\centering
+  \centering
+  \includegraphics[width=\linewidth]{obrazky-figures/relayAttack.png}\\[1pt]  
+  \caption{Schéma relay útoku}    
+  \label{obrazekRelayAttack}
+\end{figure*}
+Program nejprve provede antikolizní fázi mezi Mole a kartou a poté, s daty přijatými od karty, provede antikolizní fázi mezi Proxy a cílovým čtecím zařízením. Z předchozí demonstrace víme, že toto bude stačit k úspěšnému útoku na bezpečnostní systém dveří. Relay útok je ale univerzální a po antikolizní fázi pokračuje v přenášení komunikace. 
+
+\subsection{Implementace}
+
+Implementace útoku je rozdělena na dvě hlavní části. První část je zjednodušený celý útok tak, že zařízení Mole i Proxy jsou připojeny k jednomu programu a data se vyměňují takřka okamžitě v jednom procesu. Jedná se o ověření konceptu útoku. Druhá část už zahrnuje komunikační vrstvu, a je tak možné komunikovat s jiným počítačem. Obě části jsou obsaženy v programu \emph{MifareProxy.exe} a je mezi nimi možné přepínat pomocí argumentů. Implementace opět využívá knihovny \verb|MifareModules|. Aby mohly obě dvě zařízení využívat příkaz \verb|Send|, jsou přepnuty do konfigurace čtecího zařízení.
+\par
+
+\subsection*{Jednoduchý relay útok}
+Jednoduchý relay útok je standardní chování programu a je spíše demonstračního charakteru. Nejprve jsou inicializovány pomocné moduly pro komunikaci s oběma zařízeními Chameleon Mini. Program předpokládá, že jsou na portech ''COM3'' pro Proxy a ''COM4'' pro Mole. Případně je lze změnit argumenty ''--pcom'', respektive ''--mcom''. Následuje relay útok. Nejprve je provedena antikolizní fáze s kartou oběti. S odpověďmi je provedena antikolizní fáze také s cílovým čtecím zařízením. Poslední zpráva obsahující výzvu k autentizaci je odeslána kartě a ve smyčce se pak vyměňují data mezi zařízeními Mole a Proxy.
+
+\subsection*{Relay útok přes síť}
+Pro relay útok s komunikací přes síť je nutné nastavit program do módu Proxy argumentem ''-p'' a do módu Mole argumentem ''-m''. Jméno sériového portu se nastaví stejným způsobem jako u jednoduché verze. Komunikace probíhá přes TCP soket, kdy Proxy je klient a připojuje se k serveru Mole. Adresa~IP a port serveru je potřeba nastavit v obou instancích programu argumenty ''--mip'' a ''--mport''. \par
+Nejprve se opět inicializují obě zařízení Chameleon Mini. Po inicializaci vytvoří Mole server a počká na připojení Proxy. Připojením je vše připraveno k útoku. Jeho logika je prakticky stejná jako u jednoduchého útoku, s tím rozdílem, že data jsou posílána sítí a ne pouze sdílenou pamětí. Při komunikaci po síti se může vyskytnout problém s dlouhou dobou doručení, neboli latencí. Tento problém je nejmarkantnější u antikolizní fáze, neboť při ní mají čtečky striktní časování. Nejprve se tedy provede antikolizní fáze s kartou, která nemá striktní časování, a přijatá data karty se odešlou Proxy. Proxy tak má k dispozici veškerá data nutná k této fázi a v jejím průběhu na straně Proxy nemusí probíhat časově náročná síťová komunikace s Mole. 
+
+\subsection{Provedení}
 
 \begin{figure*}[ht]\centering
   \centering
@@ -522,13 +531,43 @@ Proxy - < Received NO DATA
 Proxy - SEND 0018 08B6DD
 Proxy - < Received NO DATA
 \end{lstlisting}
-Z výstupu programu při provádění relay útoku vidíme, že první část - antikolizní fáze mezi Mole a kartou, skončila úspěšně. Druhá část už úspěšná nebyla a útok skončil neúspěchem. Proxy sice odeslala data karty, ale čtecí zařízení neodeslalo žádnou odpověď. Z neodemčených dveří lze usoudit, že čtecím zařízením nebyla přijata data. Chameleon Mini v roli Proxy v útoku předstírá, že je karta. Přepnutím zařízení do konfigurace karty se však deaktivuje příkaz \verb|Send| a nelze tak odesílat žádná data. \par
-Neúspěšně odeslaná data lze připsat Chameleon Mini, které v konfiguraci čtecího zařízení vytváří vlastní elektromagnetické pole, jímž komunikuje. Cílové čtecí zařízení však očekává modulaci jeho nosné vlny (viz část \ref{pasivniTagy}), což se neděje. Z předchozí demonstrace víme, že Chameleon Mini dokáže se čtecím zařízením komunikovat, avšak pouze v konfiguraci emulace karty. Tato konfigurace pouze pasivně emuluje kartu a nelze se aktivně zapojovat do komunikace pomocí komunikačního portu. Relay útok za pomoci zařízení Chameleon Mini je tak možný pouze částečně, v roli Mole. Pro roli Proxy je nutné využít jiného zařízení, například již zmiňovaného Proxmark3 nebo standardní čtecí zařízení umožňující emulaci karet. Druhou možností je implementace odesílání dat v konfiguraci emulace karet do open source firmware Chameleon Mini. Zde by se ovšem mohl vyskytnout problém z první demonstrace (viz \ref{vyhodnoceniKryptoAnalyza}), kdy USB sběrnice zvyšuje latenci.\par
-Vzhledem k tomu, že relay útok je nezávislý na šifrování karty, je zabezpečení proti němu omezené. Nejzákladnější ochranou je uzavřít kartu při přenosu Faradayovy klece, které zabrání vstupu elektromagnetického pole ke kartě. Při používání je však nutno kartu z klece vyjmout, čímž vzniká krátké okno k provedení útoku. Další metodou může být zadáváním PIN kódu při jakékoliv manipulaci s kartou. Dále je možné detekovat vzdálenost karty a relay útok pomocí takzvaných {distance-bounding} protokolů, které ale zatím nevyužívá žádný standard.
+Z výstupu programu při provádění relay útoku vidíme, že první část - antikolizní fáze mezi Mole a kartou, skončila úspěšně. Druhá část už úspěšná nebyla a celý útok tak skončil neúspěchem. Proxy sice odeslala data karty, ale čtecí zařízení neodeslalo žádnou odpověď. Z neodemčených dveří lze usoudit, že čtecím zařízením nebyla přijata data. Chameleon Mini v roli Proxy v útoku předstírá, že je karta. Přepnutím zařízení do konfigurace karty se však deaktivuje příkaz \verb|Send| a nelze tak odesílat žádná data\cite{ChameleonDocs}. \par
+\begin{lstlisting}[caption=Příkaz Send po přepnutí do konfigurace karty nefunguje, label={NefungujiciSend}]
+Config?
+101:OK WITH TEXT
+ISO14443A_READER
+Send 52
+101:OK WITH TEXT
+0400
+0010
+PARITY OK
+Config=MF_CLASSIC_1K
+100:OK
+Send 52
+201:INVALID COMMAND USAGE
+\end{lstlisting}
+
+\subsection{Vyhodnocení}
+Neúspěšně odeslaná data lze připsat zařízení Chameleon Mini, které v konfiguraci čtecího zařízení vytváří vlastní elektromagnetické pole\cite{ChameleonDocs}, jímž komunikuje. Cílové čtecí zařízení však očekává modulaci jeho nosné vlny (viz část \ref{pasivniTagy}), což se neděje. Z předchozí demonstrace víme, že Chameleon Mini dokáže se čtecím zařízením komunikovat, avšak pouze v konfiguraci emulace karty. Tato konfigurace pouze pasivně emuluje kartu a nelze se aktivně zapojovat do komunikace pomocí komunikačního portu\cite{ChameleonDocs}. Relay útok za pomoci zařízení Chameleon Mini je tak možný pouze částečně, v roli Mole. Pro roli Proxy je nutné využít jiného zařízení, například již zmiňovaného Proxmark3 nebo standardní čtecí zařízení umožňující emulaci karet\cite{RelayUtokBP}. Druhou možností je implementace odesílání dat v konfiguraci emulace karet do open source firmware Chameleon Mini. Zde by se ovšem mohl vyskytnout problém z první demonstrace (viz část\ref{casovaKryptoanalyza}), kdy USB sběrnice zvyšuje latenci.\par
+Vzhledem k tomu, že relay útok je nezávislý na šifrování karty, je zabezpečení proti němu omezené. Nejzákladnější ochranou je uzavřít kartu při přenosu Faradayovy klece, které zabrání vstupu elektromagnetického pole ke kartě. Při používání je však nutno kartu z klece vyjmout, čímž vzniká krátké okno k provedení útoku. Další metodou může být zadáváním PIN kódu při jakékoliv manipulaci s kartou. Dále je možné detekovat vzdálenost karty a relay útok pomocí takzvaných {distance-bounding} protokolů, které ale zatím nevyužívá žádný standard.\par
+Tento útok je možné v praxi využít. Jsou potřeba dva útočníci. První, v roli Mole, se musí přiblížit ke kartě oběti na dostatečně dlouhou dobu potřebnou k přenesení informací. To je možné například v plné hromadné dopravě nebo při čekání v řadě. Samotná doba přenesení jedné autentizace je krátká, je ovšem nutné vzít v úvahu opakovaní útoku vícekrát z důvodu možného narušení přenosu. Útočník v roli Proxy musí nenápadně přiložit zařízením do blízkosti čtečky. Na takovém místě většinou bývá jiné zabezpečení v podobě kamer či bezpečnostní služby a neznámý předmět by vyvolal rozruch. Je ale možné zařízení zavřít do peněženky či brašny kde bude nenápadné, stejné jako normální karty.\cite{PracticalRelayAttack}
+
 
 \chapter{Závěr}
 \label{zaver}
 Cílem této práce bylo seznámit se s kartami Mifare Classic se zaměřením na jejich zranitelnosti a demonstrovat vybrané zneužitelnosti za pomoci zařízení Chameleon Mini. \par
 Na základě informací o komunikačním protokolu a šifrovacím algoritmu těchto karet byly navrženy a provedeny tři demonstrace, z nichž dvě vyžadovaly také implementační část. Ta byla provedena v jazyce C\#.Net a byla vytvořena pomocná knihovna pro usnadnění práce se zařízením Chameleon Mini.\par
-Časová kryptoanalýza se zabývala nedostatečnou náhodností generátoru náhodných čísel, který používá šifrovací algoritmus karty. Následoval útok nevyžadující implementaci, při kterém zařízení Chameleon Mini naklonuje a emuluje cizí kartu. Jako poslední byl proveden takzvaný relay útok, který přenáší komunikaci mezi kartou oběti a legitimním čtecím zařízením. Z těchto demonstrací lze považovat pouze útok s emulovanou kartou jako zcela úspěšný. Zbylé dvě demonstrace se nepodařily kvůli nedostatečným schopnostem zařízení Chameleon Mini. Všechny demonstrace byly provedeny na vstupním systému fakulty.\par
-Při možnosti pokračování v práci bych se zaměřil na neúspěšné demonstrace a realizoval je znovu za použití jiných zařízení, případně upravil firmware použitého Chameleon Mini tak, aby splňoval nároky. Dále by bylo možné demonstrovat útoky na jiných typech karet nebo rozšířit paletu útoků o další.\par
+Časová kryptoanalýza se zabývala nedostatečnou náhodností generátoru náhodných čísel, který používá šifrovací algoritmus karty. Následoval útok nevyžadující implementaci, při kterém zařízení Chameleon Mini naklonuje a emuluje cizí kartu. Jako poslední byl proveden takzvaný relay útok, který přenáší komunikaci mezi kartou oběti a legitimním čtecím zařízením. Z těchto demonstrací lze považovat pouze útok s emulovanou kartou jako zcela úspěšný. Zbylé dvě demonstrace se nepodařily kvůli nedostatečným schopnostem zařízení Chameleon Mini. Všechny demonstrace byly provedeny v reálném prostředí na dveřích osazených čtecím zařízením HID RP10.\par
+Pokračovat v této práci lze více směry. Jelikož zařízení Chameleon Mini nemělo dostatečné schopnosti pro dva ze tří útoků, nabízí se možnost provést stejné útoky za použití jiných zařízení, případně rozšířit firmware Chameleon Mini o potřebnou funkcionalitu, která prováděné útoky umožní. Dále je možné provést analýzu a útoky na jiné typy karet, nebo rozšířit paletu útoků o další.\par
+
+
+
+
+
+
+
+
+
+
+
+
