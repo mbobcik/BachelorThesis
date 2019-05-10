@@ -193,7 +193,7 @@ Po autentizaci je veškerá komunikace mezi čtecím zařízením a kartou šifr
 \end{figure*}
 
 \par
-Inicializace šifry probíhá při autentizaci karty a čtecího zařízení. Poté, co karta odešle výzvu $n_T$ (viz kapitola \ref{autentizace}) je do registru šifry obou zařízení načten sdílený tajný klíč $K$. Zde přichází na řadu vstupní bit, který se v tomto momentu vypočítá jako $i = n_T \oplus {uid}$. Všech 32 bitů tohoto vztahu se naplní do registru spolu s bity zpětné vazby LFSR. Následně se vstupní bity změní na bity výzvy čtecího zařízení $n_R$ a jsou aplikovány stejným způsobem, tedy $g(x) \oplus i$. Protože šifrování komunikace začíná při odesílání $n_R$, dřívější bity $n_R$ ovlivňují šifrování pozdějších bitů $n_R$. Na diagramu \ref{obrazekInicializaceSifry} je znázorněna inicializace šifry v obou zařízeních. Jediný rozdíl je v tom, že čtecí zařízení nejprve vygeneruje $n_R$ a poté spočítá ${\{n_R\} = n_R \oplus ks}$, zatímco karta přijme $\{n_R\}$ a teprve spočítá $n_R$. Od této chvíle je inicializace hotová a vstupní bit šifry není nadále potřeba\cite{Dismantling_Mifare_Classic}.
+Inicializace šifry probíhá při autentizaci karty a čtecího zařízení. Poté, co karta odešle výzvu $n_T$ (viz kapitola \ref{autentizace}) je do registru šifry obou zařízení načten sdílený tajný klíč~$K$. Zde přichází na řadu vstupní bit, který se v tomto momentu vypočítá jako $i = n_T~\oplus~{uid}$. Všech 32 bitů tohoto vztahu se naplní do registru spolu s bity zpětné vazby LFSR. Následně se vstupní bity změní na bity výzvy čtecího zařízení $n_R$ a jsou aplikovány stejným způsobem, tedy $g(x) \oplus i$. Protože šifrování komunikace začíná při odesílání $n_R$, dřívější bity $n_R$ ovlivňují šifrování pozdějších bitů $n_R$. Na diagramu \ref{obrazekInicializaceSifry} je znázorněna inicializace šifry v obou zařízeních. Jediný rozdíl je v tom, že čtecí zařízení nejprve vygeneruje $n_R$ a poté spočítá ${\{n_R\} = n_R \oplus ks}$, zatímco karta přijme $\{n_R\}$ a teprve spočítá $n_R$. Od této chvíle je inicializace hotová a vstupní bit šifry není nadále potřeba\cite{Dismantling_Mifare_Classic}.
 
 \begin{figure*}[ht]\centering
   \centering
@@ -295,6 +295,10 @@ Chameleon Mini připojený pomocí USB do počítače je zobrazeno jako sériov�
 Chameleon poskytuje osm slotů, které je možno nakonfigurovat jako aktivní čtecí zařízení, pasivní zařízení pro odposlech komunikace (sniffing) nebo pro uložení různých virtualizovaných karet. V každém slotu je uložena jeho konfigurace a případně obsah karty. Číslo právě aktivního slotu zjistí příkaz \verb|Setting?|. Jiný slot aktivujeme pomocí \verb|Setting=X|, kde \emph{X} je číslo od 1 do 8. Příkaz \verb|Config?| vrátí konfiguraci aktivního slotu. Všechny možné konfigurace vyjmenuje \verb|Config=?| a opět změnu konfigurace například na emulaci karty Mifare Classic provede příkaz \verb|Config=MF_CLASSIC_1K|(viz. část \ref{komunikaceChameleon}). \par 
 Každý odeslaný příkaz následuje odpověď zařízení s číslem a zprávou stavu. První cifra třímístného čísla stavu ukazuje vážnost odpovědi. Zprávy s číslem začínající cifrou ''1'' jsou spíše informačního charakteru, zatímco cifra ''2'' značí chybu.\cite{ChameleonDocs}
 
+Slotu s konfigurací virtualizace karty můžeme nastavit libovolné UID příkazem \verb|UID=<UID>|. Stejně jako v předchozím případě neznámé UID zjistíme voláním \verb|UID?|. V některých případech je potřeba nastavit náhodné UID virtualizované karty, například jako opatření proti ukládání škodlivých UID na černou listinu. Toho lze docílit nastavením jednoho z tlačítek \verb|Rbutton=UID_Random| jeho zmáčknutím. V rozhraní příkazové řádky tato funkce (zatím) zveřejněná není, ale pomocí tlačítka lze UID měnit přímo v terénu bez připojení k počítači.\par
+
+Při komunikaci může dojít ke změně paměti virtualizované karty, například snížení kreditu na kartě. Obnovením paměti karty by se kredit dostal do původního stavu a šel by znovu použít. Voláním příkazu \verb|Store| se aktuální stav karty uloží z FRAM do paměti nevolatilní paměti Flash. Po domnělé změně stavu karty \verb|Recall| načte kartu zpět do FRAM, připravenou k použití v původním stavu. Tato funkcionalita lze provázat s dvěma tlačítky na zařízení příkazy \verb|Rbutton=Store_Mem|, respektive \verb|Rbutton=Recall_Mem|.\par
+
 \begin{lstlisting}[caption=Záznam komunikace se zařízením Chameleon Mini, label={komunikaceChameleon}]
 Setting?
 101:OK WITH TEXT
@@ -306,15 +310,12 @@ Config?
 NONE
 Config=?
 101:OK WITH TEXT
-NONE,MF_ULTRALIGHT,MF_ULTRALIGHT_EV1_80B,MF_ULTRALIGHT_EV1_164B,MF_CLASSIC_1K,
-MF_CLASSIC_1K_7B,MF_CLASSIC_4K,MF_CLASSIC_4K_7B,ISO14443A_SNIFF,
-ISO14443A_READER
+NONE,MF_ULTRALIGHT,MF_ULTRALIGHT_EV1_80B,MF_ULTRALIGHT_EV1_164B, 
+MF_CLASSIC_1K, MF_CLASSIC_1K_7B,MF_CLASSIC_4K,MF_CLASSIC_4K_7B,
+ISO14443A_SNIFF, ISO14443A_READER
 Config=MF_CLASSIC_1K
 100:OK
 \end{lstlisting}
-
-Slotu s konfigurací virtualizace karty můžeme nastavit libovolné UID příkazem \verb|UID=<UID>|. Stejně jako v předchozím případě neznámé UID zjistíme voláním \verb|UID?|. V některých případech je potřeba nastavit náhodné UID virtualizované karty, například jako opatření proti ukládání škodlivých UID na černou listinu. Toho lze docílit nastavením jednoho z tlačítek \verb|Rbutton=UID_Random| jeho zmáčknutím. V rozhraní příkazové řádky tato funkce (zatím) zveřejněná není, ale pomocí tlačítka lze UID měnit přímo v terénu bez připojení k počítači.\par
-Při komunikaci může dojít ke změně paměti virtualizované karty, například snížení kreditu na kartě. Obnovením paměti karty by se kredit dostal do původního stavu a šel by znovu použít. Voláním příkazu \verb|Store| se aktuální stav karty uloží z FRAM do paměti nevolatilní paměti Flash. Po domnělé změně stavu karty \verb|Recall| načte kartu zpět do FRAM, připravenou k použití v původním stavu. Tato funkcionalita lze provázat s dvěma tlačítky na zařízení příkazy \verb|Rbutton=Store_Mem|, respektive \verb|Rbutton=Recall_Mem|.\par
 Voláním příkazu \verb|Download| je možné stáhnout obraz karty ze zařízení. Samotný přenos začne po navázání spojení protokolem {X-Modem}. Připojení tímto protokolem podporuje například program Tera Term. Mimo to se obraz karty dá stáhnout pomocí programu Chameleon Mini GUI\footnotemark, který poskytuje přehledné grafické rozhraní pro manipulaci se zařízením. Stažený obraz karty do aktivního slotu zařízení načte příkaz \verb|Upload|, který opět počká na připojení {X-Modem}. Příkazem \verb|Clear| se smaže celý obsah karty aktivního slotu.\par
 \footnotetext{\url{https://github.com/iceman1001/ChameleonMini-rebootedGUI}}
 Chameleon Mini v módu čtecího zařízení nabízí trochu jinou funkcionalitu, a tedy i jiné příkazy než v módu virtualizace karet. Mód čtecího zařízení aktivuje příkaz \\\verb|Config=ISO14443A_READER|. Tento mód je aktivován nad aktivním slotem. Jakákoli data v tomto slotu jsou smazána. Tato konfigurace slotu neovlivňuje jiné sloty. Je tedy možné mít například první slot čtecí a ostatní emulující různé karty. \par
@@ -502,12 +503,7 @@ Nejprve se opět inicializují obě zařízení Chameleon Mini. Po inicializaci 
 
 \subsection{Provedení}
 
-\begin{figure*}[ht]\centering
-  \centering
-  \includegraphics[width=\linewidth]{obrazky-figures/obrazekPokusRelay.jpg}\\[1pt]  
-  \caption{Testování relay útoku}    
-  \label{obrazekPokusRelay}
-\end{figure*}
+
 
 \begin{lstlisting}[caption=Výstup programu MifareProxy.exe při demonstraci, label={relayZaznam}]
 ** Chameleon Connected  via COM3 **
@@ -547,6 +543,13 @@ Config=MF_CLASSIC_1K
 Send 52
 201:INVALID COMMAND USAGE
 \end{lstlisting}
+
+\begin{figure*}[ht]\centering
+  \centering
+  \includegraphics[width=\linewidth]{obrazky-figures/obrazekPokusRelay.jpg}\\[1pt]  
+  \caption{Testování relay útoku}    
+  \label{obrazekPokusRelay}
+\end{figure*}
 
 \subsection{Vyhodnocení}
 Neúspěšně odeslaná data lze připsat zařízení Chameleon Mini, které v konfiguraci čtecího zařízení vytváří vlastní elektromagnetické pole\cite{ChameleonDocs}, jímž komunikuje. Cílové čtecí zařízení však očekává modulaci jeho nosné vlny (viz část \ref{pasivniTagy}), což se neděje. Z předchozí demonstrace víme, že Chameleon Mini dokáže se čtecím zařízením komunikovat, avšak pouze v konfiguraci emulace karty. Tato konfigurace pouze pasivně emuluje kartu a nelze se aktivně zapojovat do komunikace pomocí komunikačního portu\cite{ChameleonDocs}. Relay útok za pomoci zařízení Chameleon Mini je tak možný pouze částečně, v roli Mole. Pro roli Proxy je nutné využít jiného zařízení, například již zmiňovaného Proxmark3 nebo standardní čtecí zařízení umožňující emulaci karet\cite{RelayUtokBP}. Druhou možností je implementace odesílání dat v konfiguraci emulace karet do open source firmware Chameleon Mini. Zde by se ovšem mohl vyskytnout problém z první demonstrace (viz část\ref{casovaKryptoanalyza}), kdy USB sběrnice zvyšuje latenci.\par
