@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,14 +28,17 @@ namespace CryptoAnalysis
                 Verbose = false
             };
 
-            ChameleonModule chameleon1 = new ChameleonModule(serial1);
+            ChameleonModule chameleon1 = new ChameleonModule(serial1)
+            {
+                Verbose = false,
+            };
+            serial1.WriteAndGetResult("Config=ISO14443A_READER"); // config chameleon as reader
             CardModule card = new CardModule(chameleon1)
             {
                 Verbose = false
             };
 
             List<string> nonces = new List<string>(repeat);
-
             for (int i = 0; i < repeat; i++)
             {
                 sw.Start();
@@ -61,9 +64,11 @@ namespace CryptoAnalysis
 
                 chameleon1.TurnElectromagnetic(Field.Off);
                 sw.Stop();
-                if (!string.Equals(nonce, "NO DATA")) 
+                if (!string.Equals(nonce, "NO DATA"))
+                {
                     nonces.Add(nonce);
-                Console.WriteLine("nonce: {0} Elapsed: {1}ms", nonce, sw.ElapsedMilliseconds);
+                }
+                Console.WriteLine("nonce: {0} Elapsed: {1}ms ({2} ticks)", nonce, sw.ElapsedMilliseconds, sw.ElapsedTicks);
                 sw.Reset();
                 Sleep(waitTime + 2);
             }
@@ -81,8 +86,9 @@ namespace CryptoAnalysis
             {
                 Console.WriteLine("There were no duplicate nonces.");
             }
+           
 
-            if(Debugger.IsAttached)
+            if (Debugger.IsAttached)
                 Console.ReadLine();
         }
 

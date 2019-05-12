@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -69,7 +69,10 @@ namespace ChameleonProxy
             Console.WriteLine("** Received anticollision data {0} **", receivedString);
 
             string answer = AnticollisionToReader(pArgs.ProxyWaitTime, proxy, acParameters[0], acParameters[1], acParameters[2]);
-
+            if (answer.Equals("") || answer.Equals("NO DATA", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return;
+            }
             do
             {
                 SendData(stream, answer);
@@ -176,6 +179,7 @@ namespace ChameleonProxy
                 Role = "Proxy",
             };
             Console.WriteLine("** Chameleon Connected  via {0} **", proxyPort);
+            Console.ReadLine();
 
             string Atqa = "";
             string uid = "";
@@ -184,6 +188,10 @@ namespace ChameleonProxy
             AnticollisionWithCard(moleWaitTime, cardMole, ref Atqa, ref uid, ref sak);
 
             answer = AnticollisionToReader(proxyWaitTime, proxy, Atqa, uid, sak);
+            if (answer.Equals("") || answer.Equals("NO DATA", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return;
+            }
             while (true)
             {
                 //actual relaying
@@ -198,26 +206,22 @@ namespace ChameleonProxy
         private static string AnticollisionToReader(int proxyWaitTime, ChameleonModule proxy, string Atqa, string uid, string sak)
         {
             string answer = "";
-            bool anticolisionPassed = false;
-            while (!anticolisionPassed)
+
+            //anticollise proxy to reader
+
+            //assuming reqA has been sent
+            proxy.SendWithAnswer(Atqa);
+            Sleep(proxyWaitTime);
+            proxy.SendWithAnswer(uid);
+            Sleep(proxyWaitTime);
+            answer = proxy.SendWithAnswer(sak);
+            Sleep(proxyWaitTime);
+            if (answer.Equals("") || answer.Equals("NO DATA", StringComparison.InvariantCultureIgnoreCase))
             {
-                //anticollise proxy to reader
-                try
-                {
-                    //assuming reqA has been sent
-                    proxy.SendWithAnswer(Atqa);
-                    Sleep(proxyWaitTime);
-                    proxy.SendWithAnswer(uid);
-                    Sleep(proxyWaitTime);
-                    answer = proxy.SendWithAnswer(sak);
-                    Sleep(proxyWaitTime);
-                    anticolisionPassed = true;
-                }
-                catch (NoDataException)
-                {
-                    anticolisionPassed = false;
-                }
+                Console.WriteLine("*** anticollision on Proxy FAILED ***");
+                return answer;
             }
+
             Console.WriteLine("*** anticollision on Proxy passed ***");
             return answer;
         }
